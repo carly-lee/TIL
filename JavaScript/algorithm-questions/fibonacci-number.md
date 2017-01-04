@@ -43,7 +43,7 @@ var fibonacci = function(num, memo) {
 9 = 21 + 13 = 34  
 10 = 34 + 21 = 55  
 
-As you can see in the above example, the number should go through the equation if the number is grater than 1.  
+As you can see in the above example, the number should go through the equation if the number is grater than 1.    
 If the number is small, that would not be a big issue. However, if the number is huge, it will hurt performance badly.
 In order to prevent performance issue, it is recommended to record numbers that have been calculated into memory.
 
