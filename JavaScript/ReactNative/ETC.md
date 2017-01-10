@@ -29,8 +29,12 @@ after : "package-name": "git://github.com/<user>/<repo>.git"
 
 ```javascript
 "jest": {
-    "preset": "jest-react-native",
+    "preset": "react-native",
     "verbose": true,
+    "timers": "fake", // No need to wait actual time 
+    "setupFiles": [
+      "./jest/setup.js" // Mock fetch, native modules etc... 
+    ],
     "modulePaths": [
       "<rootDir>/src/" // In order to resolve nested relative paths.
     ],
@@ -60,3 +64,7 @@ after : "package-name": "git://github.com/<user>/<repo>.git"
     }
   }
 ```
+
+[Facebook react native jest setup](https://github.com/facebook/react-native/blob/master/jest/setup.js)   
+[AsyncStroage test mock](https://github.com/jasonmerino/react-native-simple-store/blob/master/__tests__/index-test.js#L31-L64)   
+[jest-fetch-mock](https://github.com/jefflau/jest-fetch-mock)
