@@ -46,8 +46,7 @@ after : "package-name": "git://github.com/<user>/<repo>.git"
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/android/",
-      "/iOS/",
-      "/custom_modules/"
+      "/iOS/"
     ],
     "haste": {
       "defaultPlatform": "ios", // When this value is changed, the test process is also different.
@@ -64,7 +63,8 @@ after : "package-name": "git://github.com/<user>/<repo>.git"
     }
   }
 ```
+## Useful links for react-native unit testing   
 
-[Facebook react native jest setup](https://github.com/facebook/react-native/blob/master/jest/setup.js)   
-[AsyncStroage test mock](https://github.com/jasonmerino/react-native-simple-store/blob/master/__tests__/index-test.js#L31-L64)   
-[jest-fetch-mock](https://github.com/jefflau/jest-fetch-mock)
+- [Facebook react native jest setup](https://github.com/facebook/react-native/blob/master/jest/setup.js)   
+- [AsyncStroage test mock](https://github.com/jasonmerino/react-native-simple-store/blob/master/__tests__/index-test.js#L31-L64)   
+- [jest-fetch-mock](https://github.com/jefflau/jest-fetch-mock)
