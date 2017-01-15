@@ -6,7 +6,7 @@ Make a function returns Nth fibonacci number when it receives a number which is 
 
 ```javascript
 var fibonacci = function(n){
-    var current, prev = 1, prevPrev= 0;
+  var current, prev = 1, prevPrev= 0;
   if( n<2 ) n;
   for( var i = 2; i<=n; i++ ){
     current = prev + prevPrev; // 1 + 0;
@@ -18,9 +18,20 @@ var fibonacci = function(n){
 
 fibonacci(100);
 ```
+- using recursive
+
+``` javascript
+function fibonacci(n){
+  if(n<=1)
+    return n;
+  else
+    return fibonacci(n-1) + fibonacci (n-2);  
+}
+```
 When you use a recursive function and want to care about performance at the same time, the recursive function should be called the last in the function.
 [Explanation in Korean](http://ledgku.tistory.com/37)
 
+- using recursive and memoization
 
 ```javascript
 var fibonacci = function(num, memo) {
