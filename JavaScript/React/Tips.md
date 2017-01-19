@@ -1,0 +1,111 @@
+# Passing addtional props to 'children'
+
+Let's say we have a list component which will take several child components. If a user clicks one of child component, it will be highlighted. There should be only one highlighted child component. Thus, if there was a previously highlighted child component, its state will be changed back to normal. In order to do so, list component should pass the component information that a user clicked.
+
+- Child component
+
+```javascript
+import React, { Component, PropTypes } from 'react';
+
+class Child extends Component {
+  
+  onClick = (e)=>{
+    e.preventDefault();
+    this.props.onClick( this.props.id );
+  }
+
+  render() {
+    const textColor = this.props.clickId === this.props.id ? 'red' : 'black';
+    return( 
+      <div style={{ color:textColor }} onClick={ this.onClick }>
+      	{ this.props.children }
+      </div> 
+     );
+  }
+}
+```
+
+## 1. Using cloneElement
+
+```javascript
+import React, { Component, PropTypes } from 'react';
+
+class List extends Component {
+
+  constructor(){
+    super();
+    this.state = { clickId: null };
+  }
+
+  _handleItemClick = (clickId) => {
+    this.setState({ clickId });
+  }
+
+  _passingPropsToChildren = ()=> {
+    return React.Children.map( this.props.children, child => {
+      return React.cloneElement( child, {
+        onClick: this._handleItemClick,
+        clickId: this.state.clickId,
+      });
+    });
+  }
+
+  render(){
+    return (
+      <div>
+        {this._passingPropsToChildren()}
+      </div>
+    );
+  }
+}
+
+// This will look like below 
+
+<List>
+  <Child id={'one'}>Child one</Child>
+  <Child id={'two'}>Child two</Child>
+  <Child id={'three'}>Child three</Child>
+</List>
+
+
+```
+
+## 2. [Render callback pattern](https://morlay.gitbooks.io/react-patterns/content/en/react-patterns/render-callback.html)
+
+```javascript
+import React, { Component, PropTypes } from 'react';
+
+class List extends Component {
+
+  constructor(){
+    super();
+    this.state = { clickId: null };
+  }
+
+  _handleItemClick = (clickId) => {
+    this.setState({ clickId });
+  }
+
+  render(){
+    return this.props.children({ 
+      clickId: this.state.clickId, 
+      onClick: this._handleItemClick });
+  }
+}
+
+// This will look like below 
+
+<List>
+  {(props) => {
+    return(
+      <div>
+        <Child id={'one'} {...props}>Child one</Child>
+        <Child id={'two'} {...props}>Child two</Child>
+        <Child id={'three'} {...props}>Child three</Child>
+      </div>
+    );
+  }}
+</List>
+
+```
+Both work in the same way as expected. However, on the second one, we don't need to loop all children and clone.
