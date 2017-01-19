@@ -109,3 +109,15 @@ class List extends Component {
 
 ```
 Both work in the same way as expected. However, on the second one, we don't need to loop all children and clone.
+
+# In which lifecycle event do you make AJAX requests and why?
+
+AJAX requests should go in the **componentDidMount** lifecycle event.
+
+There are a few reasons for this,
+
+- Fiber, the next implementation of React’s reconciliation algorithm, will have the ability to start and stop rendering as needed for performance benefits. One of the trade-offs of this is that componentWillMount, the other lifecycle event where it might make sense to make an AJAX request, will be “non-deterministic”. What this means is that _React may start calling **componentWillMount** at various times whenever it feels like it needs to._ This would obviously be a bad formula for AJAX requests.
+
+- You can’t guarantee the AJAX request won’t resolve before the component mounts. If it did, that would mean that you’d be trying to setState on an unmounted component, which not only won’t work, but React will yell at you for. Doing AJAX in componentDidMount will guarantee that there’s a component to update.
+
+from : [React interview questions](https://tylermcginnis.com/react-interview-questions/)
