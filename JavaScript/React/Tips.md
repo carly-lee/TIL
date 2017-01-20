@@ -70,7 +70,10 @@ class List extends Component {
 
 ```
 
-## 2. [Render callback pattern](https://morlay.gitbooks.io/react-patterns/content/en/react-patterns/render-callback.html)
+## 2. [Function as children](https://facebook.github.io/react/docs/jsx-in-depth.html#functions-as-children)   
+>Children passed to a custom component can be anything, as long as that component transforms them into something React can understand before rendering. This usage is not common, but it works if you want to stretch what JSX is capable of.
+
+[Render callback pattern](https://morlay.gitbooks.io/react-patterns/content/en/react-patterns/render-callback.html)
 
 ```javascript
 import React, { Component, PropTypes } from 'react';
