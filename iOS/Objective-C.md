@@ -1,4 +1,4 @@
-# Simple note about basic rules of Objective-C 
+# Objective-C 
 
 - When variables are logged using NSLog, it needs a format specifier like C.
 [Format Specifiers - Apple doc] (https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Strings/Articles/formatSpecifiers.html#//apple_ref/doc/uid/TP40004265-SW1)
