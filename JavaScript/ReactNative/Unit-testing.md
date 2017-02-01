@@ -85,7 +85,7 @@ class TestComponent extends Component {
 
 ## Testing
 
-- ### Snapshot Testing
+- Snapshot Testing
 
 ```javascript
 it('renders correctly',()=>{
@@ -94,7 +94,7 @@ it('renders correctly',()=>{
 });
 ```
 
-- ### Checking the component's variable 
+- Checking the component's variable 
 It is used in the component but doesn't trigger 'render'.
 
 ```javascript
@@ -102,7 +102,7 @@ const instance = renderer.create( <TestComponent {...props} /> ).getInstance();
 expect( instance.name ).toEqual( 'Candy' );
 ```
 
-- ### Checking if the component calls given callback or not when props changed  
+- Checking if the component calls given callback or not when props changed  
 
 I used '[enzyme](https://github.com/airbnb/enzyme)' which is made by Airbnb for easier  unit testing on React.
 
@@ -117,7 +117,7 @@ it('calls answer() when the beenCalled is set true', ()=>{
 });
 ```
 
-- ### Checking if the component calls given callback when it is pressed 
+- Checking if the component calls given callback when it is pressed 
 
 ```javascript
 const _onPress = jest.fn();
@@ -131,7 +131,7 @@ it('calls answer() when the beenCalled is set true', ()=>{
 });
 ```
 
-- ### Checking if the component displays the right contents
+- Checking if the component displays the right contents
 
 ```javascript
 it('displays \'Hello world\'', ()=>{
@@ -143,7 +143,7 @@ it('displays \'Hello world\'', ()=>{
 
 ## Mock 
 
-- ### Mock native modules on setup file.
+- Mock native modules on setup file.
 
 ```javascript
 // ./jest/setup.js
@@ -216,7 +216,7 @@ jest.doMock('requireNativeComponent', () => {
 });
 ```
 
-- ### redux store 
+- redux store 
 
 ```javascript
 import configureMockStore from 'redux-mock-store';
@@ -235,3 +235,4 @@ export default mockStore;
 - [AsyncStroage test mock](https://github.com/jasonmerino/react-native-simple-store/blob/master/__tests__/index-test.js#L31-L64)   
 - [jest-fetch-mock](https://github.com/jefflau/jest-fetch-mock)
 - [redux-mock-store](https://github.com/arnaudbenard/redux-mock-store) 
+- [react-native-svg-mock](https://github.com/FormidableLabs/react-native-svg-mock)
