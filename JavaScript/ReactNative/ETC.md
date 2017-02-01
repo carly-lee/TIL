@@ -1,10 +1,11 @@
 # ETC
 
-- Checks the size of component after it's rendered  
+- Checks the size of component after it's rendered      
+
 > [onLayout function](http://facebook.github.io/react-native/releases/0.40/docs/view.html#onlayout)    
 > Invoked on mount and layout changes with:   
 >
-> { nativeEvent: { layout: { x, y, width, height }}}
+> { nativeEvent: { layout: { x, y, width, height }}}   
 >
 > This event is fired immediately once the layout has been calculated, but the new layout may not yet be reflected on the screen at the time the event is received, especially if a layout animation is in progress.
 
