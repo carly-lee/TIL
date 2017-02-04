@@ -18,6 +18,8 @@ _onLayout(e){
 ```
 [Video lecture](https://egghead.io/lessons/react-measure-and-get-the-position-of-a-react-native-element)
 
+---
+
 - [Command failed: xcrun instruments -s](http://stackoverflow.com/questions/39778607/error-running-react-native-app-from-terminal-ios)  
 xcrun: error: unable to find utility "instruments", not a developer tool or in PATH
 
