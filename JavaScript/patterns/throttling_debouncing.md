@@ -11,11 +11,14 @@
 See the differecne visually [here](http://demo.nimius.net/debounce_throttle/) 
 
 ## Debounce   
+
+![Debouncing](https://cdn.css-tricks.com/wp-content/uploads/2016/04/debounce.png)
+
 Allows us to "group" multiple sequential calls in a single one.   
 It fires another event when there is differecne from previous. So every different output from previous fires only one event.
 
-<p data-height="346" data-theme-id="0" data-slug-hash="KVxGqN" data-default-tab="result" data-user="dcorb" data-embed-version="2" data-pen-title="Debounce. Trailing" class="codepen">See the Pen <a href="http://codepen.io/dcorb/pen/KVxGqN/">Debounce. Trailing</a> by Corbacho (<a href="http://codepen.io/dcorb">@dcorb</a>) on <a href="http://codepen.io">CodePen</a>.</p>
-<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+<iframe height='337' scrolling='no' title='Debounce. Trailing' src='//codepen.io/dcorb/embed/KVxGqN/?height=337&theme-id=0&default-tab=result&embed-version=2' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'>See the Pen <a href='http://codepen.io/dcorb/pen/KVxGqN/'>Debounce. Trailing</a> by Corbacho (<a href='http://codepen.io/dcorb'>@dcorb</a>) on <a href='http://codepen.io'>CodePen</a>.
+</iframe>
 
 ## Throttle   
 Allows to our function to execute only once in every X milliseconds. It helps to reduce number of receving stream of events.(Such as scroll, keyboard event and so on.)
