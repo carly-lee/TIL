@@ -39,3 +39,4 @@ References
 - [Debounce in lodash](https://github.com/lodash/lodash/blob/master/debounce.js)
 - [Throttle in lodash](https://github.com/lodash/lodash/blob/master/throttle.js)
 - [requestAnimationFrame](https://www.html5rocks.com/en/tutorials/speed/animations/)
+- [Throttling and Debouncing in JavaScript](https://medium.com/@_jh3y/throttling-and-debouncing-in-javascript-b01cad5c8edf#.bosypaio8)

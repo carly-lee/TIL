@@ -33,7 +33,8 @@ try {
 doCleanup();            //complete()
 ```
 
-in Rx
+## in Rx
+
 ```javascript
 const collection = Rx.Observable.fromEvent(selector, 'click');
 const observer = {
