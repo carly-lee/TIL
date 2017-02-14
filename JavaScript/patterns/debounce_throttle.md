@@ -20,6 +20,20 @@ It fires another event when there is differecne from previous. So every differen
 <p data-height="346" data-theme-id="0" data-slug-hash="KVxGqN" data-default-tab="result" data-user="dcorb" data-embed-version="2" data-pen-title="Debounce. Trailing" class="codepen">See the Pen <a href="http://codepen.io/dcorb/pen/KVxGqN/">Debounce. Trailing</a> by Corbacho (<a href="http://codepen.io/dcorb">@dcorb</a>) on <a href="http://codepen.io">CodePen</a>.</p>
 <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
 
+Simple example in vanilla javascript
+
+```javascript
+const debounce = (func, delay)=>{
+  let inDebounce = undefined;
+  return (...args)=>{
+    clearTimeout(inDebounce);
+    inDebounce = setTimeout(()=>{
+      func.apply(this, args);
+    }, delay);
+  };
+};
+```
+
 ## Throttle   
 Allows to our function to execute only once in every X milliseconds. It helps to reduce number of receving stream of events.(Such as scroll, keyboard event and so on.)
 
