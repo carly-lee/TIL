@@ -1,6 +1,30 @@
-# Currying
+# Function Composition
 
-## Example - request util
+## Partial application
+
+## Currying
+
+### Examples
+
+- Calculates price of item in the cart
+
+```javascript
+const map = fn => array => array.map(fn);
+const multiply = x => y => x * y;
+const pluck = key => object => object[key];
+
+const discount = multiply(0.98);
+const tax = multiply(1.0925);
+
+const customRequest = request({ headers: { 'X-Custom': 'mykey' }});
+
+customRequest({ url: '/cart/items' })
+  .then( map(pluck('price')) )
+  .then( map(discount) )
+  .then( map(tax) );
+```
+
+- Simple request util
 
 ```javascript
 function getResponse( response ){
@@ -43,7 +67,27 @@ const updateUserInfo = put({ url: '/user/me', nickname: 'Curry' });
 
 ```
 
-# Partial application
+## Compose
+
+```javascript
+import { compose } from 'lodash/fp';
+
+const map = fn => array => array.map(fn);
+const multiply = x => y => x * y;
+const pluck = key => object => object[key];
+
+const discount = multiply(0.98);
+const tax = multiply(1.0925);
+
+const customRequest = request({ headers: { 'X-Custom': 'mykey' }});
+
+customRequest({ url: '/cart/items' })
+  .then( map(
+    // <--- right to left. became single iteration.
+    compose( tax, discount, pluck('price') ) 
+    // map( tax( discount( pluck('price') )))
+  ));
+```
 
 ---
 

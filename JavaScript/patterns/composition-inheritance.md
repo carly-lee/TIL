@@ -94,5 +94,3 @@ bruno.bark(); // "Woof, I am Bruno"
 
 reference 
 - [Composition over Inheritance](https://medium.com/humans-create-software/composition-over-inheritance-cb6f88070205#.e03go36vv)
-- [Master the JavaScript Interview: What is Function Composition?](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-function-composition-20dfb109a1a0#.3j54z47br)
-- [Master the JavaScript Interview: What is Functional Programming?](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-functional-programming-7f218c68b3a0#.hjjkfjh5f)
