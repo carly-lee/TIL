@@ -46,20 +46,17 @@ const defaultOptions = {
     }
   };
 
-const request = defaults => method => options => {
+const request = defaults => options => {
     options = Object.assign( {}, defaults, method );
     return fetch( options.url, options )
         .then(getResponse)
         .then(response => response.json());
 }
 
-// add default header
-const customRequest = request(defaultOptions);
-
 // make request functions by method types.
-const get = customRequest('GET');
-const post = customRequest('POST');
-const put = customRequest('PUT');
+const get = request({ method: 'GET', ...defaultOptions});
+const post = request({ method: 'POST', ...defaultOptions});
+const put = request({ method: 'PUT', ...defaultOptions});
 
 // usage
 const getUserInfo = get({ url: '/user/me' });
