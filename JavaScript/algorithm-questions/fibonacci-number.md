@@ -18,20 +18,36 @@ var fibonacci = function(n){
 
 fibonacci(100);
 ```
-- using recursive
+- Using recursive
 
 ``` javascript
 function fibonacci(n){
-  if(n<=1)
+  if( n<2 )
     return n;
   else
     return fibonacci(n-1) + fibonacci (n-2);  
 }
 ```
-When you use a recursive function and want to care about performance at the same time, the recursive function should be called the last in the function.
-[Explanation in Korean](http://ledgku.tistory.com/37)
+When you use a recursive function and want to care about performance at the same time, the recursive function should be called the last in the function. 
+It's called 'tail call optimization(TCO)'
 
-- using recursive and memoization
+- Applied 'tail call optimization'.
+
+```javascript
+function fibIterRecursive(n, a, b){
+  if( n<2 ){
+    return a;
+  }else{
+    return fibIterRecursive( n-1, a+b, a );
+  }
+};
+
+function fibonacci(n){
+  return fibIterRecursive( n, 1, 0 ); 
+}
+```
+
+- Using recursive and memoization
 
 ```javascript
 var fibonacci = function(num, memo) {
@@ -43,30 +59,9 @@ var fibonacci = function(num, memo) {
 }
 ```
 
-1 = 1  
-2 = (2-1) + (2-2) = 1  
-3 = 1 + 1 = 2  
-4 = 2 + 1 = 3  
-5 = 3 + 2 = 5  
-6 = 5 + 3 = 8  
-7 = 8 + 5 = 13  
-8 = 13 + 8 = 21  
-9 = 21 + 13 = 34  
-10 = 34 + 21 = 55  
+---
 
-As you can see in the above example, the number should go through the equation if the number is grater than 1.    
-If the number is small, that would not be a big issue. However, if the number is huge, it will hurt performance badly.
-In order to prevent performance issue, it is recommended to record numbers that have been calculated into memory.
+References
 
-
-
-
-
-
-
-
-
-
-
-
-
+- [ES6 Tail Call Optimization Explained](http://benignbemine.github.io/2015/07/19/es6-tail-calls/)
+- [Scenic City Summit 2016: Jeremy Fairbank - Functional Programming Basics in ES6 (JavaScript)](https://youtu.be/HvMemAgOw6I)
