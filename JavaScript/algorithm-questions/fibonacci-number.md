@@ -31,26 +31,23 @@ function fibonacci(n){
 When you use a recursive function and want to care about performance at the same time, the recursive function should be called the last in the function. 
 It's called 'tail call optimization(TCO)'
 
-- Applied 'tail call optimization'.
+- Applied 'tail call optimization'.   
+Following approach uses least amount of call stacks.
 
 ```javascript
-function fibIterRecursive(n, a, b){
-  if( n<2 ){
+function fibonacci( n, a=1, b=0 ){
+	if( n<2 ){
     return a;
   }else{
-    return fibIterRecursive( n-1, a+b, a );
+    return fibonacci( n-1, a+b, a );
   }
-};
-
-function fibonacci(n){
-  return fibIterRecursive( n, 1, 0 ); 
 }
 ```
 
 - Using recursive and memoization
 
 ```javascript
-var fibonacci = function(num, memo) {
+function fibonacci(num, memo) {
   if( num < 2 ) return num;
     memo = memo || {};
   if (memo[num]) return memo[num];
