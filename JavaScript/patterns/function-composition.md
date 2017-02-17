@@ -47,7 +47,7 @@ const defaultOptions = {
   };
 
 const request = defaults => options => {
-    options = Object.assign( {}, defaults, method );
+    options = Object.assign( {}, defaults, options );
     return fetch( options.url, options )
         .then(getResponse)
         .then(response => response.json());

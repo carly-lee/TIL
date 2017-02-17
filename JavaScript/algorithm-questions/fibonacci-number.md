@@ -5,10 +5,10 @@
 Make a function returns Nth fibonacci number when it receives a number which is bigger than 1.
 
 ```javascript
-var fibonacci = function(n){
-  var current, prev = 1, prevPrev= 0;
+function fibonacci(n){
+  let current, prev = 1, prevPrev= 0;
   if( n<2 ) n;
-  for( var i = 2; i<=n; i++ ){
+  for( let i = 2; i<=n; i++ ){
     current = prev + prevPrev; // 1 + 0;
     prevPrev = prev; // 1;
     prev = current; // 1;
@@ -32,7 +32,7 @@ When you use a recursive function and want to care about performance at the same
 It's called 'tail call optimization(TCO)'
 
 - Applied 'tail call optimization'.   
-Following approach uses least amount of call stacks.
+Following approach uses least amount of call stacks among other recursive ways here.
 
 ```javascript
 function fibonacci( n, a=1, b=0 ){
