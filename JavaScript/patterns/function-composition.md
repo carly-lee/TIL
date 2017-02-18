@@ -27,15 +27,14 @@ customRequest({ url: '/cart/items' })
 - Simple request util
 
 ```javascript
-function getResponse( response ){
-	const promise = new Promise(( resolve, reject ) => {
+function validateResponse( response ){
+	return new Promise(( resolve, reject ) => {
 		if( response.status >= 200 && response.status < 400 ){
-			resolve( response.json());
+			resolve( response.json() );
 		}else{
-			reject( response );
+			reject( response.json() );
 		}
 	});
-	return promise;
 }
 
 const defaultOptions = {
@@ -46,17 +45,16 @@ const defaultOptions = {
     }
   };
 
-const request = defaults => options => {
+const request = defaults => validateFunc => options => {
     options = Object.assign( {}, defaults, options );
     return fetch( options.url, options )
-        .then(getResponse)
-        .then(response => response.json());
+        .then( validateFunc );
 }
 
 // make request functions by method types.
-const get = request({ method: 'GET', ...defaultOptions});
-const post = request({ method: 'POST', ...defaultOptions});
-const put = request({ method: 'PUT', ...defaultOptions});
+const get = request({ method: 'GET', ...defaultOptions})(validateResponse);
+const post = request({ method: 'POST', ...defaultOptions})(validateResponse);
+const put = request({ method: 'PUT', ...defaultOptions})(validateResponse);
 
 // usage
 const getUserInfo = get({ url: '/user/me' });
