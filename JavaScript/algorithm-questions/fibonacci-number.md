@@ -22,11 +22,10 @@ fibonacci(100);
 
 ``` javascript
 function fibonacci(n){
-  if( n<2 )
-    return n;
-  else
-    return fibonacci(n-1) + fibonacci (n-2);  
+  if( n<2 ) return n;
+  return fibonacci(n-1) + fibonacci (n-2);  
 }
+fibonacci(20000) // This will crash the web browser.
 ```
 When you use a recursive function and want to care about performance at the same time, the recursive function should be called the last in the function. 
 It's called 'tail call optimization(TCO)'
@@ -35,13 +34,11 @@ It's called 'tail call optimization(TCO)'
 Following approach uses least amount of call stacks among other recursive ways here.
 
 ```javascript
-function fibonacci( n, a=1, b=0 ){
-	if( n<2 ){
-    return a;
-  }else{
-    return fibonacci( n-1, a+b, a );
-  }
+function fibonacci( n, sum=0, prev=1 ){
+	if( n<1 ) return sum;
+  return fibonacci( n-1, prev+sum, sum );
 }
+fibonacci(20000) // Infinity. Works on Safari and Firefox. 
 ```
 
 - Using recursive and memoization
@@ -62,3 +59,5 @@ References
 
 - [ES6 Tail Call Optimization Explained](http://benignbemine.github.io/2015/07/19/es6-tail-calls/)
 - [Scenic City Summit 2016: Jeremy Fairbank - Functional Programming Basics in ES6 (JavaScript)](https://youtu.be/HvMemAgOw6I)
+- [Playing with ES6: Tail Call Optimization](https://hackernoon.com/es6-tail-call-optimization-43f545d2f68b#.qi8kw0fx2)
+- [ECMAScript 6 Proper Tail Calls in WebKit](https://webkit.org/blog/6240/ecmascript-6-proper-tail-calls-in-webkit/)
