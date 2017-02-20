@@ -34,11 +34,8 @@ function getGCD( high, low ){
   // 12 8
   // 8 4 
   // 4 0
-  if( low === 0 ){
-    return high;
-  }else{
-    return getGCD( low, high%low );
-  }
+  if( low === 0 ) return high;
+  return getGCD( low, high%low );
 }
 
 getGCD(12, 8); // 4
@@ -135,7 +132,7 @@ function nlcm(num) {
   for( var j=2; j<num.length; j++ ){
     lcm = getLCM( num[j], lcm );
   }
-    return lcm;
+  return lcm;
 }
 
 nlcm([2,6,8,14]); // 168

@@ -1,4 +1,4 @@
 #Today I Learned
 
-I will write my own study note on this repository. 
+These are my study notes.   
 It will be about various subject but mostly front-end development.
