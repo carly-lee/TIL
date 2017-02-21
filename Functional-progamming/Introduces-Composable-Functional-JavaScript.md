@@ -166,7 +166,106 @@ const result = findColor('green')
 console.log( result ); // no color 
 ```
 
+## Use chain for composable error handling with nested Eithers
 
+```javascript
+const Right = x =>
+({
+  map: f => Right(f(x)),     
+  fold: (f, g) => g(x),       
+  inspect: ()=> `Right(${x})` 
+});
+
+const Left = x =>
+({
+  map: f => Left(x),          
+  fold: (f, g) => f(x),       
+  inspect: ()=> `Left(${x})` 
+});
+
+const fromNullable = x =>
+  x != null ? Right(x) : Left(null);
+
+const tryCatch = f => {
+  try {
+    return Right(f());
+  }catch(e){
+    return Left(e);
+  }
+}
+
+const fs = require('fs');
+
+const getPort = () => {
+  try {
+    const str = fs.readFileSync('config.json'); // {port: 8888}
+    const config = JSON.parse(str);
+    return config.port;
+  }catch(e){
+    return 3000;
+  }
+}
+
+// Refactor 'getPort()'
+
+const getPort = () =>
+  tryCatch(() => fs.readFileSync('config.json')) // [1] Right('')
+  .map(c => tryCatch(JSON.parse(c))) // [2] Right(Right('')) or Right(Left())
+  .fold(e => 3000, c => c.port);
+
+const result = getPort();
+console.log(result); // 8888
+
+```
+
+[1] It returns wrapped value.   
+[2] Whatever the input is, it wraps value and returns it. So the result value will be wrapped 2 times. It will be quite confusing to figure it out and we need to fold twice which is a bit inconvenient.
+
+That's why we need 'chain' in the Either.
+
+```javascript
+const Right = x =>
+({
+  chain: f => f(x),
+  map: f => Right(f(x)),     
+  fold: (f, g) => g(x),       
+  inspect: ()=> `Right(${x})` 
+});
+
+const Left = x =>
+({
+  chain: f => Left(x),
+  map: f => Left(x),          
+  fold: (f, g) => f(x),       
+  inspect: ()=> `Left(${x})` 
+});
+
+const fromNullable = x =>
+  x != null ? Right(x) : Left(null);
+
+const tryCatch = f => {
+  try {
+    return Right(f());
+  }catch(e){
+    return Left(e);
+  }
+}
+
+const fs = require('fs');
+
+const getPort = () =>
+  tryCatch(() => fs.readFileSync('config.json')) 
+  .chain(c => tryCatch(JSON.parse(c))) // [1] Right('')
+  .fold(e => 3000, c => c.port);
+
+const result = getPort();
+console.log(result); // 8888
+
+```
+
+[1] Since we used 'chain' method, it will return only one 'Right'.
+
+The difference between 'chain' and 'fold' is that 'fold' takes a value out of the box whether it's 'Right' or 'Left'. However, 'chain' expects you run a function and return another one. Thus, 'chain' would be one of the steps in the middle and 'fold' will be used to take the result value out of the box.
 
 ---
 
