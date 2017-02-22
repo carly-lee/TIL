@@ -1,6 +1,6 @@
 # [Professor Frisby Introduces Composable Functional JavaScript](https://egghead.io/courses/professor-frisby-introduces-composable-functional-javascript)
 
-## Create linear data flow with container style types(Box)   
+## 1. Create linear data flow with container style types(Box)   
 In the following code, several operations happens in one function.
 
 ```javascript
@@ -50,7 +50,7 @@ console.log( result );
 [4] For easier debugging.   
 [5] 'Map' is a composition. It takes input and returns the output. More functions can be added.   
 
-## Refactor imperative code to a single composed expression using Box
+## 2. Refactor imperative code to a single composed expression using Box
 
 - Imperative codes 
 
@@ -103,7 +103,7 @@ const result = applyDiscount( '$5.00', '20%' );
 console.log( result ); // 4
 ```
 
-## Enforce a null check with composable code branching using Either
+## 3. Enforce a null check with composable code branching using Either
 
 ```javascript
 const Right = x =>
@@ -166,7 +166,7 @@ const result = findColor('green')
 console.log( result ); // no color 
 ```
 
-## Use chain for composable error handling with nested Eithers
+## 4. Use chain for composable error handling with nested Eithers
 
 ```javascript
 const Right = x =>
@@ -267,7 +267,7 @@ console.log(result); // 8888
 
 The difference between 'chain' and 'fold' is that 'fold' takes a value out of the box whether it's 'Right' or 'Left'. However, 'chain' expects you run a function and return another one. Thus, 'chain' would be one of the steps in the middle and 'fold' will be used to take the result value out of the box.
 
-## A collection of Either examples compared to imperative code
+## 5. A collection of Either examples compared to imperative code
 
 ```javascript
 // Imperative code
@@ -342,7 +342,8 @@ const readFile = x => tryCatch(() => fs.readFileSync(x));
 const wrapExamples = example =>
   fromNullable(example.previewPath)
   .chain(readFile)
-  .fold(() => example, ex => Object.assign({preview: p}, ex));
+  .fold(() => example, 
+        preview => Object.assign({}, example, { preview }));
 ```
 
 ```javascript
@@ -363,6 +364,8 @@ const parseDbUrl = cfg =>
   .fold(e => null,
         u => u.match(/postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/));
 ```
+
+## 6. Create types with Semigroups
 
 ---
 
