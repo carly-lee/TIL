@@ -366,6 +366,31 @@ const parseDbUrl = cfg =>
 ```
 
 ## 6. Create types with Semigroups
+A type with a concat method that is associative.
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
 
 ---
 

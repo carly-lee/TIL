@@ -78,6 +78,31 @@ doubleSmallNumber' x = (if x > 100 then x else x*2) + 1
 
 We usually use ' to either denote a strict version of a function (one that isn't lazy) or a slightly modified version of a function or a variable.
 
+## List 
+
+```haskell
+```
+
+```haskell
+```
+
+```haskell
+```
+
+```haskell
+```
+
+```haskell
+```
+
+```haskell
+```
+
+```haskell
+```
+
+```haskell
+```
 
 ---
 
