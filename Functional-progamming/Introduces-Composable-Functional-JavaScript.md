@@ -456,7 +456,7 @@ points: Sum(12),
 friends: [ 'Franklin', 'Gatsby' ] } */
 ```
 
-## Ensure failsafe combination using monoids
+## 8. Ensure failsafe combination using monoids
 
 ```
 1 + 0 // 1    
@@ -467,8 +467,6 @@ We have a neutral element here that acts as an identity of sorts that gives us b
 
 ```javascript
 Sum.empty = () => Sum(0) // No matter how many times add 0, the result doesn't change.
-
-
 
 // true && true -> true 
 // false && true -> false 
@@ -491,7 +489,7 @@ console.log(first([])) // This will break. Because it doesn't have any value to 
 
 > A semigroup, it does not have an element to return so it's not a safe operation, whereas with the monoids we could take as many as we possibly want, even none, and still return us back something. It's a perfectly safe operation here that we can reduce as many of them as we'd like.
 
-## A curated collection of Monoids and their uses
+## 9. A curated collection of Monoids and their uses
 
 ```javascript
 const Sum = x =>
@@ -635,8 +633,340 @@ const Pair = (x, y) =>
 })
 ```
 
-## Unbox types with foldMap
+## 10. Unbox types with foldMap
 
+```javascript
+Box(3).fold(x => x) // 3
+Right(3).fold(e => e, x => x) // 3
+```
+'fold' takes the value out of the context. foldMap does the same but also with mapping.
+
+```javascript
+const { Map, List } = require('immutable-ext')
+const { Sum } = require('../monoid')
+
+const res = [Sum(1), Sum(2), Sum(3)]
+    .reduce((acc, x) => acc.concat(x), Sum.empty())
+
+console.log(res)
+```
+Since it's just calling concat, we could just call .fold(Sum.empty()) here, and that would do the exact same thing.
+
+```javascript
+// in 'immutable-ext'
+fold : function(empty) {
+  return this.foldMap(x => x, empty)
+},
+foldMap : function(f, empty) {
+  return empty != null
+  ? this.reduce((acc, x) => acc.concat(f(x)), empty)
+  : this.reduce((acc, x) => acc.concat(f(x)))
+},
+
+// immutable-js
+reduce(
+  reducer: (reduction: R, value: V, key: K, iter: Iterable) => R,
+  initialReduction?: R,
+  context?: any
+): R
+
+const res = [Sum(1), Sum(2), Sum(3)]
+    .fold(Sum.empty())
+    //.reduce((acc, x) => acc.concat(x), Sum.empty())
+```
+The reason we have to pass Sum.empty() in is because there's no way to know if it's an empty list, where to start, and what to return.
+
+The same thing like 'List' can be done with 'Map' as well since 'Map' is the collection of things.
+```javascript
+const res = Map({brian: Sum(3), sara: Sum(5)})
+    .fold(Sum.empty())
+
+// However, in the map we don't have tha value as a monoid in the most of cases.
+// We can map over the value and put the value into the monoid and fold it.
+const res = Map({brian: 3, sara: 5})
+    .map(Sum)
+    .fold(Sum.empty())
+
+// This can be done using foldMap in one step.
+const res = Map({brian: 3, sara: 5})
+    .foldMap(Sum, Sum.empty())
+```
+
+## 11. Delay Evaluation with LazyBox
+
+With Box, we are able to map over each function, and pass our input to output, and work-like function composition here.
+```javascript
+const Box = x =>            
+({
+  map: f => Box(f(x)),      
+  fold: f => f(x),          
+  inspect: ()=> `Box(${x})`
+})
+
+const result = Box(' 64 ')
+               .map(abba => abba.trim())
+               .map(trimmed => new Number(trimmed))
+               .map(number => number + 1)
+               .map(x => String.fromCharCode(x))
+               .fold(x => x.toLowerCase()) // a
+```
+
+A LazyBox will take, instead of an x, will take a g here for a function. This is basically lazy function composition.
+```javascript
+const LazyBox = g =>
+({
+  fold: f => f(g()),
+  map: f => LazyBox(() => f(g()))
+})
+
+const result = LazyBox(() => ' 64 ')
+               .map(abba => abba.trim())
+               .map(trimmed => new Number(trimmed))
+               .map(number => number + 1)
+               .map(x => String.fromCharCode(x))
+               .fold(x => x.toLowerCase())
+```
+'fold' acts like trigger. Before calling 'fold', nothings actually happens.
+
+## 12. Capture Side Effects in a Task
+Now, we're going to use this data.task on NPM here from Folktale. We can make Task from anything.
+```javascript
+const Task require('data.task')
+
+Task.of(1)
+.fork(e => console.log('err', e),
+      x => console.log('success', x))
+
+// success 1
+
+Task.rejected(1)
+.fork(e => console.log('err', e),
+      x => console.log('success', x))
+
+// err 1
+
+Task.rejected(1) // Task(1)
+.map(x => x + 1)
+.chain(x => Task.of(x + 1))
+.fork(e => console.log('err', e),
+      x => console.log('success', x))
+
+// err 1
+```
+'rejected' ignores everything and returns 'err 1' like 'Left'.   
+We also can chain from the task.
+
+```javascript
+// This will just run immediately.
+const launchMissiles = () => 
+    console.log("launch missiles!")
+
+// If we capture this in a Task, it will be lazy, and we can compose with it. 
+const launchMissiles = () => 
+    new Task((rej, res) => {
+        console.log("launch missiles!")
+        res("missile")
+    })
+
+launchMissiles()
+.map(x => x + "!")
+.fork(e => console.log('err', e),
+      x => console.log('success', x))
+```
+If we don't fork it here, it just don't run at all.   
+So we can do things lazy like below.
+
+```javascript
+const app = launchMissiles().map(x => x + "!")
+
+app.fork(e => console.log('err', e),
+         x => console.log('success', x))
+
+// We can do more computations before it runs.
+app
+  .map(x => x + "!")
+  .fork(e => console.log('err', e),
+        x => console.log('success', x))
+```
+
+## 13. Use Task for Asynchronous Actions
+
+```javascript
+const Task = require('data.task')
+const fs = require('fs')
+
+const app = () => 
+    fs.readFile('config.json', 'utf-8', (err, contents) => {
+        if(err) throw err
+
+        const newContents = contents.replace(/8/g, '6')
+
+        fs.writeFile('config.json', newContents, (err, _) => {
+            if (err) throw err
+            console.log('success!')
+        })
+    })
+```
+Convert it to use tasks
+
+```javascript
+const readFile = (filename, enc) =>
+    new Task((rej, res) => 
+    fs.readFile(filename, enc, (err, contents) =>
+        err ? rej(err) : res(contents)))
+        
+const writeFile = (filename, contents) =>
+    new Task((rej, res) => 
+    fs.readFile(filename, contents, (err, success) =>
+        err ? rej(err) : res(success)))
+
+const app = 
+    readFile('config.json', 'utf-8')
+    .map(contents => .replace(/8/g, '6'))
+    .chain(contents => writeFile('config1.json', contents))
+
+app.fork(e => console.log(e),
+         x => console.log('success'))
+
+//  config1.json: {"port": 8888} -> {"port": 6666}
+```
+'Task' works quite similar to 'Promise' in JavaScript.
+But there is difference. Task is lazy and Promise isn't.
+>Promises are eager, which means they are not pure - **they will immediately run side effects upon construction**. Task will allow you to work with values as though they were there, but it does not run until you tell it with fork() - usually outside your pure application.
+
+## 14. You've been using Functors
+The definition of a functor is **any type with a map method**. It must obey a few laws.    
+Any type fx, some functor holding x, when we map f over it and then we map g over it, that should be the same as running map once over it by saying first run  f, then run g.
+
+```javascript
+const `Box` = require('./`Box`')
+const Task = require('data.task')
+const Either = require('./either')
+const {Right, Left, FromNullable} = Either
+const { List, Map } = require('immutable-ext')
+
+// law : fx.map(f).map(g) == fx.map(x => g(f(x)))
+
+const res1 = Box('squirrels')
+            .map(s => s.substr(5))
+            .map(s => s.toUpperCase())
+
+const res2 = Box('squirrels')
+            .map(s => s.substr(5).toUpperCase())
+console.log(res1, res2) // Box(RELS) Box(RELS)
+```
+This works for any type here. We could use our Right, Left here as well. 
+
+```javascript
+const id = x => x
+
+// fx.map(id) == id(fx)
+// If I have a functor x and I map id over my type, that will be the same as just calling id on fx.
+
+const res1 = Box('crayons').map(id)
+const res2 = id(Box('crayons'))
+
+console.log(res1, res2) // Box(crayons) Box(crayons)
+```
+## 15. Lift into a Pointed Functor with of
+'of' is really a generic interface to be able to place a value into our type, or we call it lifting a value to our type.
+
+```javascript
+Task.of('hello') // Task('hello')
+Either.of('hello') // Right('hello') --> in order to user generic interface of value, 'Right' is chosen.
+Box.of(100) // Box(100)
+```
+
+## 16. You've been using Monads
+
+![Dependencies](https://github.com/carly-lee/TIL/raw/master/resouces/images/dependencies.png)   
+
+
+```
+Box, Either, Task, List
+```
+Box, Either, Task, List -- all these types are monads.  
+F standing for any of these types here, that places a value into the type and a chain method. These two together create the monadic interface.  
+
+```javascript
+F.of, chain(flatMap, bind, >>=)
+```
+If you look at any language, you'll see this combination(of, chain) to create a monad. 
+
+We going to get the user info using httpGet. Then we do another httpGet to get the comments of the user. The problem here is that we'll end up with a Task of a Task of an array of comments.
+```javascript
+httpGet('/user')
+.map(user => 
+    httpGet('/comments/${user.id}') // Task(Task([comments])) <- This is not ideal.
+
+// if we change 'map' to 'chain'...
+httpGet('/user')
+.chain(user => 
+    httpGet('/comments/${user.id}') // Task([comments])
+```
+The key point of **chain** here is going to **flatten these two types into one**. That's why it's called flatMap sometimes here.
+
+```javascript
+// If we didn't call the chain...
+httpGet('/user')
+.map(user => 
+    httpGet('/comments/${user.id}')
+    .map(comments => 
+        updateDOM(user, comments))) // Task(Task(Task(DOM))) 
+
+// We can flatten the result using 'chain'
+httpGet('/user')
+.chain(user => 
+    httpGet('/comments/${user.id}')
+    .chain(comments => 
+        updateDOM(user, comments))) // Task(DOM)
+```
+
+```javascript
+const join = m =>
+    m.chain(x => x)
+```
+This will just return the inner type. If I had a 'Box(Box(x))' this would return me a 'Box(x)' because it just returns its inner type to join it together. We're going to use this to define a few laws here for the monad.   
+
+- The first law 
+```javascript
+join(m.map(join)) == join(join(m))
+```
+In order to see it works as expected we need a monad to map over it.
+
+```javascript
+const m = Box(Box(Box(3)))
+const res1 = join(m.map(join))
+const res2 = join(join(m))
+
+console.log( res1, res2 ) // Box(3) Box(3)
+```
+This should work for any monad.
+
+- The second law
+
+```javascript
+join(Box.of(m) == join(m.map(Box.of))
+```
+
+```javascript
+const m = Box('wonder')
+const res1 = join(Box.of(m))
+const res2 = join(m.map(Box.of))
+
+console.log( res1, res2 ) // Box(wonder) Box(wonder)
+```
+
+If I have some monad m and I chain a function over it to get its value and run f(x), I can actually put it back in the type with M.of here.
+```javascript
+m.chain(x => M.of(f(x)))
+```
+We can derive a map method from any monad. That tells us that a monad is a functor. Also, it's an **applicative functor** and a **pointed functor**.
+
+## 17. Build curried functions
+
+```javascript
+```
 
 ```javascript
 ```
@@ -661,3 +991,4 @@ References
 - [Functional Programming for JavaScript People](https://medium.com/@chetcorcos/functional-programming-for-javascript-people-1915d8775504#.qzbqn0mgy)
 - [Functional Programming In JavaScript — With Practical Examples (Part 1)](https://medium.freecodecamp.com/functional-programming-in-js-with-practical-examples-part-1-87c2b0dbc276#.8dao66cag)
 - [Functional Programming In JavaScript — With Practical Examples (Part 2)](https://medium.freecodecamp.com/functional-programming-in-js-with-practical-examples-part-2-429d2e8ccc9e#.xvyndxcgo)
+- [Folktale](https://github.com/origamitower/folktale)
