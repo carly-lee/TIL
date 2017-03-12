@@ -965,6 +965,146 @@ We can derive a map method from any monad. That tells us that a monad is a funct
 
 ## 17. Build curried functions
 
+'Function currying' is transforming a function that takes multiple arguments into a series of one-argument functions. Every time when a curried function gets called it returns a new function until it gets all arguments in need. And those arguments stores in the closure and cannot be accessed from the outside. When it gets all arguments in need, it returns the final value.
+
+```javascript
+const add = (x, y) => x + y
+
+const inc = y => add(1, y) // preload the value 1 
+
+const res = inc(2)
+
+console.log(res)
+```
+
+```javascript
+const add = x => y => x + y
+
+const inc = y => add(1) // returns a function takes 'y'
+
+const res = inc(2)
+
+console.log(res)
+```
+Before the curried function returns the value, we can create various functions that preloaded different private value inside of it. The function will use the same calculation logic to return the value using a different set of private value in it.
+
+```javascript
+const modulo = dvr => dvd => dvd % dvr
+
+const isOdd = modulo(2)
+
+console.log(isOdd(2)) // 0
+console.log(isOdd(21)) // 1
+
+const filter = pred => xs => xs.filter(pred)
+
+const getAllOdds = filter(isOdd)
+
+const res = getAllOdds([1,2,3,4]) // [1, 3]
+```
+
+```javascript
+const replace = regex => repl => str =>  
+    str.replace(regex, repl)
+
+const censor = replace(/[aeiou]/ig)('*')
+
+const res = censor('hello world') // h*ll* w*rld
+```
+Wait for your data as the last argument so you can keep building up these other functions.
+
+```javascript
+const map = f => xs => xs.map(f)
+
+const censor = replace(/[aeiou]/ig)('*')
+const censorAll = map(censor)
+const res = censorAll(['hello', 'world']) // ['h*ll*', 'w*rld']
+```
+> Instead of censor working on one thing, we'll work on an array of things just by partially applying map. We've transformed this function to work on single values to a function that works on arrays just by surrounding it in map, and there's our results. That's what currying does. You separate each argument returning a new function, and you typically want your data to be the last argument.
+
+# 18. Applicative Functors for multiple arguments
+
+We have a Box of a function here, and we'd like to apply it to a Box of a value.
+
+```javascript
+const Box = require('../box')
+
+const res = Box(x => x + 1).ap(Box(2)) // Box(3)
+console.log(res)
+```
+
+```javascript
+const Box = x =>
+({
+    ap: b2 => b2.map(x), 
+    chain: f => f(x),
+    map: f => Box(f(x)),
+    fold: f => f(x),
+    inspect: () => `Box(${x})`
+})
+```
+'ap' will takes a second box that holds a value and map x over the second box.
+
+What if we want to take an x and a y, and apply x + y? By calling this, and applying it to Box(2). 
+```javascript
+const res = Box(x => y => x + y).ap(Box(2)) // Box(x => 2 + y)
+```
+We applied Box(2) to a function that takes x and Box returns another function which takes y.
+Because the result Box is holding a function, we can keep applying these boxes with functions in them to boxes with values in them. **Box(y => 2 + y).ap(Box(3))**. We should end up with a **Box(5)**.
+
+```javascript
+const add = x => y => x + y
+const res = Box(add).ap(Box(2)).ap(Box(3)) // Box(5)
+```
+> The effect we've had here is taking 2 boxes, and then calling a function with both arguments. We have 2 boxes at once. We're unboxing both of them, and passing it into 'add' function. Notice it's very important that this is in the curried form. **It takes one argument at a time, and that's because it's going ahead and applying each Box one at a time**.
+
+```javascript
+F(x).map(f) == F(f).ap(F(x))
+
+Box(2).map(x => x + 1) == Box(x => x + 1).ap(Box(2))
+```
+> We call this applicative functors if it has an 'ap' method. If I have any functor f holding an x, and I call map(f), that is equal to a functor holding f applied to a functor holding x.
+
+'ap' takes a functor. 'map' takes a function.    
+Both work in the same way but a left and a right side is flipped.
+
+```javascript
+// a lift applicative with 2 arguments. 
+const liftA2 = (f, fx, fy) =>
+    F(f).ap(fx).ap(fy) // We don't know what functor 'F' is.
+
+// Based on the rules we have drawn from above, we can rewrite the function.
+// F(f).ap(fx) == fx.map(f)
+const liftA2 = (f, fx, fy) =>
+    fx.map(f).ap(fy)
+
+const add = x => y => x + y
+
+const res = liftA2(add, Box(2), Box(4)) // Box(6)
+```
+
+```javascript
+const res = Box(add).ap(Box(2)).ap(Box(4))
+//add(2, 4)
+
+const res = liftA2(add, Box(2), Box(4))
+```
+
+We can curry 'liftA2' as well.
+
+```javascript
+const liftA2 = f => a => b => a.map(f).ap(b)
+
+const mult = a => b => a * b
+
+const liftedMult = liftA2(mult) 
+
+console.log( liftedMult(Box(2))(Box(3)) ) //Box(6)
+console.log( liftedMult(Box(2))(Box(6)) ) //Box(12)
+```
+
+# 19. Apply multiple functors as arguments to a function (Applicatives)
+
 ```javascript
 ```
 
@@ -992,3 +1132,7 @@ References
 - [Functional Programming In JavaScript — With Practical Examples (Part 1)](https://medium.freecodecamp.com/functional-programming-in-js-with-practical-examples-part-1-87c2b0dbc276#.8dao66cag)
 - [Functional Programming In JavaScript — With Practical Examples (Part 2)](https://medium.freecodecamp.com/functional-programming-in-js-with-practical-examples-part-2-429d2e8ccc9e#.xvyndxcgo)
 - [Folktale](https://github.com/origamitower/folktale)
+- [Functional and Immutable Design Patterns in JavaScript](https://javascriptair.com/episodes/2015-12-30/)
+- [ramdajs - curry](http://ramdajs.com/0.19.1/docs/#curry)
+- [Why curry helps](https://hughfdjackson.com/javascript/why-curry-helps/)
+- [](https://github.com/hemanth/functional-programming-jargon)
