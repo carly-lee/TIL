@@ -1106,22 +1106,105 @@ console.log( liftedMult(Box(2))(Box(6)) ) //Box(12)
 # 19. Apply multiple functors as arguments to a function (Applicatives)
 
 ```javascript
+const Either = require('../either')
+
+const liftA2 = (f, fx, fy) =>
+    fx.map(f).ap(fy)
+
+const $ = selector =>
+    Either.of({selector, height: 10})
+
+// passing two different Eithers in
+const getScreenSize = (screen, head, foot)=>
+    screen - (head.height + foot.height)
 ```
 
 ```javascript
+$('header').chain(head =>
+    $('footer').map(footer =>
+        getScreenSize(800, head, foot)))
 ```
+This will work as expected but things happen sequential.  
+However, we can run these at the same time using applicatives.
 
 ```javascript
+const getScreenSize = screen => head => foot =>
+    screen - (head.height + foot.height)
+
+const res = Either.of(getScreenSize(800))
+            .ap($('header'))
+            .ap($('footer'))
+
+// Right(780)
+```
+Based on the rules the following code should end up with the same result. 
+```javascript
+const liftA2 = (f, fx, fy) =>
+    fx.map(f).ap(fy)
+
+const res = liftA2(getScreenSize(800), $('header'), $('footer'))
+
+// Right(780)
 ```
 
-```javascript
-```
+# 20. List comprehensions with Applicative Functors
 
 ```javascript
+let result = [];
+
+for(let x of ['teeshirt', 'sweater']) {
+    for(let y of ['large', 'medium', 'small']) {
+        for(let z of ['black', 'white']) {
+          result.push(`${x}-${y}-${z}`);
+        }
+    }
+}
+
+console.log(result)
+/*
+[ 'teeshirt-large-black',
+  'teeshirt-large-white',
+  'teeshirt-medium-black',
+  'teeshirt-medium-white',
+  'teeshirt-small-black',
+  'teeshirt-small-white',
+  'sweater-large-black',
+  'sweater-large-white',
+  'sweater-medium-black',
+  'sweater-medium-white',
+  'sweater-small-black',
+  'sweater-small-white' ]
+*/
 ```
+We can capture this messy imperative code with an applicative factor. 
 
 ```javascript
+const { List } = require('immutable-ext')
+
+const merch = () =>
+    List.of(x => y => z => `${x}-${y}-${z}`)
+    .ap(List(['teeshirt', 'sweater']))
+    .ap(List(['large', 'medium', 'small']))
+    .ap(List(['black', 'white']))
+
+console.log(merch().toJS())
+/*
+[ 'teeshirt-large-black',
+  'teeshirt-large-white',
+  'teeshirt-medium-black',
+  'teeshirt-medium-white',
+  'teeshirt-small-black',
+  'teeshirt-small-white',
+  'sweater-large-black',
+  'sweater-large-white',
+  'sweater-medium-black',
+  'sweater-medium-white',
+  'sweater-small-black',
+  'sweater-small-white' ]
+*/
 ```
+> This captures a pattern of a **List Comprehension**. You may have seen in other languages like Python, or CoffeeScript or Haskell. It's very useful in declarative nature and easy to add another case without actually cracking open loops within loops, within loops.
+
 
 ---
 
@@ -1135,4 +1218,4 @@ References
 - [Functional and Immutable Design Patterns in JavaScript](https://javascriptair.com/episodes/2015-12-30/)
 - [ramdajs - curry](http://ramdajs.com/0.19.1/docs/#curry)
 - [Why curry helps](https://hughfdjackson.com/javascript/why-curry-helps/)
-- [](https://github.com/hemanth/functional-programming-jargon)
+- [Functional Programming Jargon](https://github.com/hemanth/functional-programming-jargon)
