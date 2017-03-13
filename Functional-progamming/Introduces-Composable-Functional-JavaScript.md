@@ -1022,7 +1022,7 @@ const res = censorAll(['hello', 'world']) // ['h*ll*', 'w*rld']
 ```
 > Instead of censor working on one thing, we'll work on an array of things just by partially applying map. We've transformed this function to work on single values to a function that works on arrays just by surrounding it in map, and there's our results. That's what currying does. You separate each argument returning a new function, and you typically want your data to be the last argument.
 
-# 18. Applicative Functors for multiple arguments
+## 18. Applicative Functors for multiple arguments
 
 We have a Box of a function here, and we'd like to apply it to a Box of a value.
 
@@ -1103,7 +1103,7 @@ console.log( liftedMult(Box(2))(Box(3)) ) //Box(6)
 console.log( liftedMult(Box(2))(Box(6)) ) //Box(12)
 ```
 
-# 19. Apply multiple functors as arguments to a function (Applicatives)
+## 19. Apply multiple functors as arguments to a function (Applicatives)
 
 ```javascript
 const Either = require('../either')
@@ -1147,7 +1147,7 @@ const res = liftA2(getScreenSize(800), $('header'), $('footer'))
 // Right(780)
 ```
 
-# 20. List comprehensions with Applicative Functors
+## 20. List comprehensions with Applicative Functors
 
 ```javascript
 let result = [];
@@ -1176,7 +1176,7 @@ console.log(result)
   'sweater-small-white' ]
 */
 ```
-We can capture this messy imperative code with an applicative factor. 
+We can capture this messy imperative code with an applicative functor. 
 
 ```javascript
 const { List } = require('immutable-ext')
