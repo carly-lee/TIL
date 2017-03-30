@@ -1029,28 +1029,28 @@ We have a Box of a function here, and we'd like to apply it to a Box of a value.
 ```javascript
 const Box = require('../box')
 
-const res = Box(x => x + 1).ap(Box(2)) // Box(3)
-console.log(res)
+const res = Box(x => x + 1).ap(Box(2)) 
+console.log(res) // Box(3)
 ```
 
 ```javascript
 const Box = x =>
 ({
-    ap: b2 => b2.map(x), 
-    chain: f => f(x),
+    ap: b2 => b2.map(x), // will takes a second box that holds a value and map x over the second box.
+    chain: f => f(x),   
     map: f => Box(f(x)),
     fold: f => f(x),
     inspect: () => `Box(${x})`
 })
 ```
-'ap' will takes a second box that holds a value and map x over the second box.
 
-What if we want to take an x and a y, and apply x + y? By calling this, and applying it to Box(2). 
+What if we want to take an x and a y, and apply x + y?    
+Applying it to Box(2), we will have a box of the function 'x => 2 + y'
 ```javascript
 const res = Box(x => y => x + y).ap(Box(2)) // Box(x => 2 + y)
 ```
 We applied Box(2) to a function that takes x and Box returns another function which takes y.
-Because the result Box is holding a function, we can keep applying these boxes with functions in them to boxes with values in them. **Box(y => 2 + y).ap(Box(3))**. We should end up with a **Box(5)**.
+_Because the result Box is holding a function, we can keep applying these boxes with functions in them to boxes with values in them._ **Box(y => 2 + y).ap(Box(3))**. We should end up with a **Box(5)**.
 
 ```javascript
 const add = x => y => x + y
@@ -1076,7 +1076,7 @@ const liftA2 = (f, fx, fy) =>
 // Based on the rules we have drawn from above, we can rewrite the function.
 // F(f).ap(fx) == fx.map(f)
 const liftA2 = (f, fx, fy) =>
-    fx.map(f).ap(fy)
+    fx.map(f).ap(fy) // We don't need to what functor is.
 
 const add = x => y => x + y
 
@@ -1205,12 +1205,49 @@ console.log(merch().toJS())
 ```
 > This captures a pattern of a **List Comprehension**. You may have seen in other languages like Python, or CoffeeScript or Haskell. It's very useful in declarative nature and easy to add another case without actually cracking open loops within loops, within loops.
 
+## 21. Write applicatives for concurrent actions
+
+```javascript
+```
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
 
 ---
 
 References
 
 - [Professor Frisby Introduces Composable Functional JavaScript](https://egghead.io/courses/professor-frisby-introduces-composable-functional-javascript)
+- [Fantasy Land Specification](https://github.com/fantasyland/fantasy-land)
 - [Functional Programming for JavaScript People](https://medium.com/@chetcorcos/functional-programming-for-javascript-people-1915d8775504#.qzbqn0mgy)
 - [Functional Programming In JavaScript — With Practical Examples (Part 1)](https://medium.freecodecamp.com/functional-programming-in-js-with-practical-examples-part-1-87c2b0dbc276#.8dao66cag)
 - [Functional Programming In JavaScript — With Practical Examples (Part 2)](https://medium.freecodecamp.com/functional-programming-in-js-with-practical-examples-part-2-429d2e8ccc9e#.xvyndxcgo)
