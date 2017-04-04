@@ -1210,16 +1210,70 @@ console.log(merch().toJS())
 ## 21. Write applicatives for concurrent actions
 
 ```javascript
+const Task = require('data.task')
+
+const Db = ({
+  find: id =>
+    new Task((rej, res) =>
+      setTimeout(() =>
+        res({id: id, title: `Project ${id}`}), 100))
+})
+
+const reportHeader = (p1, p2) => 
+  `Report: ${p1.title} compared to ${p2.title}`
+
+Db.find(20).chain(p1 =>
+  Db.find(8).map(p2 =>
+    reportHeader(p1, p2)))
 ```
+Db just returns a project with id and title. 'reportHeader' needs to projects as parameters.  
+If we find project 1, project 2 and then call reportHeader, it needs to wait for finding 2 projects. However, those 2 projects don't have dependency each other. In this case, we can use applicatives to kick both off at the same time.
 
 ```javascript
+Task.of(p1 => p2 => reportHeader(p1, p2))
+.ap(Db.find(20))
+.ap(Db.find(8))
+.fork(console.error, console.log) 
+//Project 20 compared to Project 8
 ```
+Rather than altering the original function, we could curry the Task. That Db.find(20) and Db.find(8) will kick off at the same time. They don't wait for one to resolve before it calls the second one.
+
+## 22. Leapfrogging types with Traversable
 
 ```javascript
+const fs = require('fs')
+const Task = require('data.task')
+const futurize = require('futurize').futurize(Task)
+const { List } = require('immutable-ext')
+
+const files = ['box.js', 'config.json']
+const res = files.map(fn => readFile(fn, 'utf-8'))
+console.log(res)
+
+/**
+[ Task { fork: [Function], cleanup: [Function] },
+  Task { fork: [Function], cleanup: [Function] } ]
+**/
 ```
+As a result of reading files in array, we got an array of Tasks. It's hard to know when all of them are finished and fork each one of them.
+
+> We can very well map fork each one and we want to know when we are all done. Really, what we want is to take this array of tasks and turn it into a Task of an array of results.
+
+###  **[Task] => Task([])**   
+> Essentially, we want to turn these types inside out. Or **leapfrog** the types so that the array is on the inside of the Task and the Task is on the outside of the array. Whenever we wanted to commute two types like this, what we can do is instead of calling map we call **traverse**.
 
 ```javascript
+const files = List(['box.js', 'config.json'])
+files.traverse(Task.of, fn => readFile(fn, 'utf-8'))
+.fork(console.error, console.log)
 ```
+Now, this Task will be on the outside of the array. We need to set the first argument in the case of not ever running the function which is the second argument. Since the function will always return 'Task', the first argument is 'Task'. Since 'traverse' will return a Task, we can fork. The output will be a list of results.
+
+> "Can we re-arrange any two types?"   
+> 
+> Not all types have a traverse instance, that means they can't define traverse. Things like Stream for instance. However, the more important thing to know is, if you see a traverse, yes you can traverse it.
+> 
+> **traverse** expects you to return an applicative functor from this function here. In this case Task is an applicative functor and so this all works out. If we pass something that did not have that method which this relies on under the hood, it would blow up on us. 
 
 ```javascript
 ```
