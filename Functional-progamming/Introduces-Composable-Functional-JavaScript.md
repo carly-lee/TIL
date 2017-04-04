@@ -729,7 +729,8 @@ const result = LazyBox(() => ' 64 ')
 'fold' acts like trigger. Before calling 'fold', nothings actually happens.
 
 ## 12. Capture Side Effects in a Task
-Now, we're going to use this data.task on NPM here from Folktale. We can make Task from anything.
+Now, we're going to use this 'data.task' on NPM here from Folktale. We can make Task from anything. It acts like Box + Either but lazy. In order to capture the value, we need to 'fork'.
+
 ```javascript
 const Task require('data.task')
 
@@ -773,7 +774,7 @@ launchMissiles()
 .fork(e => console.log('err', e),
       x => console.log('success', x))
 ```
-If we don't fork it here, it just don't run at all.   
+**If we don't fork it here, it just don't run at all**.   
 So we can do things lazy like below.
 
 ```javascript
@@ -1125,6 +1126,7 @@ $('header').chain(head =>
         getScreenSize(800, head, foot)))
 ```
 This will work as expected but things happen sequential.  
+It will wait to find header, footer and then run 'getScreenSize'.   
 However, we can run these at the same time using applicatives.
 
 ```javascript
@@ -1209,6 +1211,7 @@ console.log(merch().toJS())
 
 ```javascript
 ```
+
 ```javascript
 ```
 
