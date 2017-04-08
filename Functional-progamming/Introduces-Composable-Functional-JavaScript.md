@@ -1275,6 +1275,54 @@ Now, this Task will be on the outside of the array. We need to set the first arg
 > 
 > **traverse** expects you to return an applicative functor from this function here. In this case Task is an applicative functor and so this all works out. If we pass something that did not have that method which this relies on under the hood, it would blow up on us. 
 
+## 23. Maintaining structure whilst asyncing
+
+```javascript
+const fs = require('fs')
+const Task = require('data.task')
+const { List, Map } = require('immutable-ext')
+
+const httpGet = (path, params) =>
+  Task.of(`${path} result`)
+
+Map({ home: '/', about: '/about-us', blog: '/blog' })
+  .map(route => httpGet(route, {}))
+```
+If we map over each key with httpGet, we would end up with a Map with Tasks.
+```javascript
+Map({ home: Task('/ result'), about: Task('/about-us result'), blog: Task('/blog')})
+```
+We would rather, instead of a bunch of these key be tasks, we would want one Task on the outside and all these keys to be already resolved. 
+
+```javascript
+Map({ home: '/', about: '/about-us', blog: '/blog' })
+  .traverse(Task.of, route => httpGet(route, {}))
+  .fork(console.error, console.log)
+
+/*
+Map { "home": "/ result", "about": "/about-us result",
+"blog": "/blog result" }
+*/
+```
+We can do that with **traverse** function, which we have to give Task.of as the first argument, which matches the return type of this function.
+
+## 24. Principled type conversions with Natural Transformations
+
+```javascript  
+ ```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
 ```javascript
 ```
 
