@@ -219,7 +219,7 @@ console.log(result) // 8888
 ```
 
 [1] It returns wrapped value.   
-[2] Whatever the input is, it wraps value and returns it. So the result value will be wrapped 2 times. It will be quite confusing to figure it out and we need to fold twice which is a bit inconvenient.
+[2] Whatever the input is, it wraps the value and returns it. So the result value will be wrapped 2 times. It will be quite confusing to figure it out and we need to fold twice which is a bit inconvenient.
 
 That's why we need 'chain' in the Either.
 
@@ -1307,23 +1307,135 @@ Map { "home": "/ result", "about": "/about-us result",
 We can do that with **traverse** function, which we have to give Task.of as the first argument, which matches the return type of this function.
 
 ## 24. Principled type conversions with Natural Transformations
+Natural Transformation could be called as a type conversion.
+> A natural transformation is actually a function that takes a functor holding some a to another functor holding that a. it's a structural change.
 
 ```javascript  
+F a -> G a
  ```
-
+If we want to take an Either into a Task, we'll take out Either and fold it and into a rejected Task if it's a Left or a successful Task if it's a Right.
 ```javascript
+const eitherToTask = e => 
+  e.fold(Task.rejected, Task.of)
+
+eitherToTask(Right('nightingale'))
+.fork(e => console.error('err', e),
+      r => console.log('res', r))
+// res nightingale
+
+eitherToTask(Left('errrrr'))
+.fork(e => console.error('err', e),
+      r => console.log('res', r))
+// err errrrr
 ```
 
 ```javascript
+const boxToEither = b =>
+    b.fold(Right)
+
+const res = boxToEither(Box(100))
+console.log(res)
+// Right(100)
+```
+The reason we choose Right here. Had we chosen a Left we would be violating the laws of natural transformations.
+
+```javascript
+nt(x).map(f) == nt(x.map(f))
+```
+> A natural transformation is anything nt, this function, natural transformation, that when I transform x, some functor, when I map over that with f, it must be equal to mapping f over our functor, and then naturally transforming it afterwards.
+
+When we need a monoid for semigroup of Boxes, Right was the monoid for Box.
+
+```javascript
+const res1 = boxToEither(Box(100)).map(x => x * 2)
+const res2 = boxToEither(Box(100).map(x => x * 2))
+console.log(res1, res2)
+//Right(200) Right(200)
+```
+Any function that satisfies the equation, is a natural transformation.
+
+```javascript
+const first = xs =>
+    fromNullable(xs[0])
+
+const res1 = first([1,2,3]).map(x => x + 1)
+const res2 = first([1,2,3].map(x => x + 1))
+// Right(2) Right(2)
+```
+This will throw it in an Either with fromNullable. What we're doing here is transforming a List into an either. We lose the rest of the List, but that doesn't matter, because this equation is still valid. 
+
+## 25. Apply Natural Transformations in everyday work
+
+```javascript
+const { List } = require('immutable-ext')
+
+['hello', 'world']
+.chain(x => x.split(''))
+```
+We can't do this because chain doesn't exist on the array.   
+We could do instead do a natural transformation from the array to a List.
+
+```javascript
+const res = List(['hello', 'world'])
+.chain(x => List(x.split('')))
+
+// List [ "h", "e", "l", "l", "o", "w", "o", "r", "l", "d" ]
+```
+The constructor of List is the natural transformation.
+
+```javascript
+const first = xs => 
+    fromNullable(xs[0])
+
+const largeNumbers = xs =>
+    xs.filter(x => x > 100)
+
+const larger = x => 
+    x * 2
+
+const app = xs =>
+    first(largeNumbers(xs).map(larger))
+
+console.log(app([2, 400, 5, 1000])) // Right(800)
+```
+In this case, it went through and doubled every single number in the array and grabbed the first one. According to natural transformation laws, which is **nt(x).map(f) == nt(x.map(f))**, we don't need to go through the whole array. 
+
+```javascript
+const app = xs => 
+    first(largeNumbers(xs)).map(larger)
+// Right(800)
+```
+If we grab the first number and then map(larger), it doesn't map every single number.
+
+We're going to have a Db here that finds some user and if the id is greater than 2 we'll accept that and return our fake user here. If it is not, we'll return an error. Our fake user has a best_friend_id. What we're going to do is try to find a user and then find that user's best friend. 
+```javascript
+const fake = id =>
+    ({id: id, name: 'user1', best_friend_id: id + 1})
+
+const Db = ({
+    find: id =>
+        new Task((rej, res) =>
+            res(id > 2 ? Right(fake(id)) : Left('not found')))
+})
+
+const eitherToTask = e =>
+    e.fold(Task.rejected, Task.of)
 ```
 
 ```javascript
+Db.find(3)// Task(Right(user))
+.chain(either =>
+    either.map(user => Db.find(user.best_friend_id))) // Right(Task(Right(User)))
 ```
 
 ```javascript
-```
-
-```javascript
+Db.find(3)// Task(Right(user))
+.chain(eitherToTask) //Task(user)
+.chain(user => 
+    Db.find(user.best_friend_id)) // Task(Right(user))
+.chain(eitherToTask) // Task(user)
+.fork(e => console.error(e),
+      r => console.log(r))
 ```
 
 ```javascript
