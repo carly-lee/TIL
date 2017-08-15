@@ -1,4 +1,4 @@
 # Today I Learned
 
-These are my study notes.   
-It will be about various subject but mostly front-end development.
+These are just my study notes.   
+It will be about various subjects but mostly software development.

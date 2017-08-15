@@ -1438,6 +1438,76 @@ Db.find(3)// Task(Right(user))
       r => console.log(r))
 ```
 
+## 26. Isomorphisms and round trip data transformations
+
+> An isomorphism is a pair of functions, to() and from(), where if I call 'to' on x followed by a 'from', I should just get back my original x.  
+```
+from(to(x)) == x
+to(from(y)) == y
+```
+> It means I can **convert and convert back to get my original x**.
+> I claim a string is isomorphic to an array of characters. **These two data types should hold the same information and be able to convert there and back without losing anything**.
+
+```javascript
+// String ~ [Char]
+const Iso = (to, from) => 
+({
+  to,
+  from
+})
+
+const chars = Iso(s => s.split(''), c => c.join(''))
+const res = chars.from( chars.to('hello world')) // Split 'hello world' and join it again. 
+console.log(res) // hello world
+
+const truncate = str =>
+  chars.from( chars.to(str).slice(0, 3) ).concat('...')
+
+// hello world 
+// -> ['h', 'e', 'l', 'l', ' ', 'w', 'o', 'r', 'l', 'd' ] 
+// -> ['h', 'e', 'l'] 
+// -> hel 
+// -> hel...
+```
+
+```javascript
+// [a] ~ Either null a
+const singleton = Iso(e => e.fold(() => [], x => [x]), // fold: (f, g) => g(x)
+                     ([x]) => x ? Right(x): Left())
+
+const filterEither = (e, pred) =>
+  singleton.from( singleton.to(e).filter(pred) )
+
+const res = filterEither(Right('hello'), x => x.match(/h/ig))
+              .map(x => x.toUpperCase())
+
+console.log(res) // Right(HELLO)
+
+// Right(hello)
+// to -> Right([hello])
+// filter -> Right([hello])
+// from -> Right('hello')
+// Right(HELLO)
+
+const res2 = filterEither(Right('ello'), x => x.match(/h/ig))
+              .map(x => x.toUpperCase())
+
+console.log(res2) // Left(undefined)
+
+// Right(hello)
+// to -> Right([hello])
+// filter -> Right([])
+// from -> Left()
+// Left(undefined)
+```
+
+There's no lost information on both Isomorphisms. It can be converted to another and converted back to original type without losing any information.
+
+## 27. Build a data flow for a real world app
+
+```javascript
+```
+ 
 ```javascript
 ```
 
@@ -1458,6 +1528,22 @@ Db.find(3)// Task(Right(user))
 
 ```javascript
 ```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+```javascript
+```
+
+## 28. Retrieve and use data from an api with pure functional constructs
+
+## 29. Find the intersection of sets with Semigroups
 
 ---
 
