@@ -1504,52 +1504,105 @@ console.log(res2) // Left(undefined)
 There's no lost information on both Isomorphisms. It can be converted to another and converted back to original type without losing any information.
 
 ## 27. Build a data flow for a real world app
+## 28. Retrieve and use data from an api with pure functional constructs
+## 29. Find the intersection of sets with Semigroups
+
+We will take two sets of artists and compare them and figure out the commonality between them. We're going to build a flow for our data to flow through. We are going to retrieve the data and then just pass it through a series of functions.
 
 ```javascript
+//Spotify.js
+
+const Task = require('data.task')
+const request = require('request')
+const Either = require('data.either')
+
+const httpGet = url =>
+  new Task((rej, res) =>
+  request(url, (error, response, body) =>
+    error? rej(error) : res(body)))
+
+const first = xs => 
+  Either.fromNullable(xs[0])
+
+const eitherToTask = e =>
+  e.fold(Task.rejected, Task.of)
+
+const parse = Either.try(JSON.parse)
+
+const getJSON = url =>
+  httpGet(url)
+  .map(parse)
+  .chain(eitherToTask)
+
+const findArtist = name =>
+  getJSON(`https://api.spotify.com/v1/search?q=${name}&type=artist`)
+  .map(result => result.artists.items)
+  .map(first) // get the best match
+  .chain(eitherToTask)
+  .map(artists => artists.map(artist => artist.name))
+
+const relatedArtist = id =>
+  getJSON(`https://api.spotify.com/v1/artists/${id}/realated-artists`)
+  .map(result => result.artists)
+
+module.exports = { findArtist, relatedArtist }
+```
+```javascript
+const Task = require('data.task')
+const Spotify = require('./spotify')
+const { List } = require('immutable-ext')
+const { Pair, Sum } = require('./monoid')
+
+const argv = new Task((rej, res) => res(process.argv))
+const names = argv.map(args => args.slice(2))
+
+const Intersection = xs => 
+({
+  xs,
+  concat: ({ xs: ys }) => 
+    Intersection(xs.filter(x => ys.some(y => x === y )))
+})
+
+const related = name => 
+  Spotify.findArtist(name)
+  .map(artist => artist.id)
+  .chain(Spotify.relatedArtists)
+
+// [1,2,3,4] ^ [3,4,5,6] = [3,4]
+
+const artistIntersection = rels =>
+  rels
+  .foldMap(x => Pair(Intersection(x), Sum(x.length))) // Get common related artists and the number how many we compared
+  .bimap(x => x.xs, y => y.x)
+  .toList()
+
+const main = names => 
+  List(names)
+  .traverse(Task.of, related)
+  .map(artistIntersection)
+
+names.chain(main).fork(console.error, console.log)
 ```
  
 ```javascript
+const Intersection = xs => // takes an array of Xs
+({
+  xs,
+  concat: ({ xs: ys }) => // Assign Xs to Ys since we need to refer Xs and Ys both
+    Intersection(xs.filter(x => ys.some(y => x === y )))
+    // It goes through the Xs and filters out if the X is included in the Ys.
+})
+
+console.log( Intersection([1,2,3,4]).concat( Intersection([3,4,5,6]) ).xs )
+// [3,4]
 ```
-
-```javascript
-```
-
-```javascript
-```
-
-```javascript
-```
-
-```javascript
-```
-
-```javascript
-```
-
-```javascript
-```
-
-```javascript
-```
-
-```javascript
-```
-
-```javascript
-```
-
-```javascript
-```
-
-## 28. Retrieve and use data from an api with pure functional constructs
-
-## 29. Find the intersection of sets with Semigroups
 
 ---
 
 References
 
 - [Professor Frisby Introduces Composable Functional JavaScript](https://egghead.io/courses/professor-frisby-introduces-composable-functional-javascript)
+- [Classroom Coding(Functional Todo App)](https://github.com/DrBoolean/Practically-Functional/tree/answers/todo-app)
 - [Fantasy Land Specification](https://github.com/fantasyland/fantasy-land)
 - [Functional Programming for JavaScript People](https://medium.com/@chetcorcos/functional-programming-for-javascript-people-1915d8775504#.qzbqn0mgy)
 - [Functional Programming In JavaScript — With Practical Examples (Part 1)](https://medium.freecodecamp.com/functional-programming-in-js-with-practical-examples-part-1-87c2b0dbc276#.8dao66cag)
