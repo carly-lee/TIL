@@ -2,6 +2,7 @@
 
 ## 1. Create linear data flow with container style types(Box)   
 In the following code, several operations happens in one function.
+What following function does is take a string and trim it, parse int, add number to it and get the char code from string.
 
 ```javascript
 const nextCharForNumberString = str => {
@@ -12,43 +13,49 @@ const nextCharForNumberString = str => {
 }
 
 const result = nextCharForNumberString('  64 ')
-console.log( result )
+console.log( result ) // A
 ```
 The above code could be rewritten like below.
 However, it is quite hard to follow and not straightforward.
 
 ```javascript
-const nextCharForNumberString = str => String.fromCharCode( parseInt(str.trim()) +1 )
+const nextCharForNumberString = str => String.fromCharCode( parseInt( str.trim() ) +1 )
 const result = nextCharForNumberString('  64 ')
-console.log( result )
+console.log( result ) // A
 ```
 
 Let's make small functions which does only one work at a time and compose it.
 Since 'string' in javascript cannot be mapped, it needs to be in a box in order to be mapped.
 
 ```javascript
-const Box = x =>            // [1]
+const nextCharForNumberString = str =>
+  [str]
+  .map(s => s.trim())
+  .map(s => parseInt(s))
+  .map(i => i + 1)
+  .map(i => String.fromCharCode(i)) // [ 'A' ]
+```
+We've captured each assignment in a very minimal context.   
+Since each expression has its own state completely contained, there are no side effects.
+
+```javascript
+const Box = x =>            // [1] Capture the given 'x' into closure.
 ({
-  map: f => Box(f(x)),      // [2]
-  fold: f => f(x),          // [3]
-  inspect: ()=> `Box(${x})` // [4]
+  map: f => Box(f(x)),      // [2] The return value type should be the same for chaining. It is called 'identity functor'.
+  fold: f => f(x),          // [3] Unwrap the return value.
+  inspect: ()=> `Box(${x})` // [4] Just for easier debugging.
 })
 
 const nextCharForNumberString = str => 
   Box(str)
-  .map(s => s.trim()) // [5]
+  .map(s => s.trim()) // [5] 'Map' is a composition. It takes input and returns the output. More functions can be added. 
   .map(r => parseInt(r))
   .map(i => i+1)
-  .fold(i => String.fromCharCode(i)) 
+  .fold(i => String.fromCharCode(i))
 
 const result = nextCharForNumberString('  64 ')
-console.log( result )
+console.log( result ) // Box('A')
 ```
-[1] Capture the given 'x' into closure.   
-[2] The return value type should be the same for chaining. It is called 'identity functor'.    
-[3] Unwrap the return value.  
-[4] For easier debugging.   
-[5] 'Map' is a composition. It takes input and returns the output. More functions can be added.   
 
 ## 2. Refactor imperative code to a single composed expression using Box
 
