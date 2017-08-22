@@ -59,6 +59,8 @@ console.log( result ) // Box('A')
 
 ## 2. Refactor imperative code to a single composed expression using Box
 
+What following codes do is going to take a string of money and a string of a percentage, and return us what the discount will be.
+
 - Imperative codes 
 
 ```javascript
@@ -93,17 +95,17 @@ const Box = x =>
 const moneyToFloat = str =>
   Box(str)
     .map(s => s.replace(/\$/g, ''))
-    .map(r => parseFloat(r))
+    .map(r => parseFloat(r)) // Box allows us to un-nest expression.
 
 const percentToFloat = str =>
   Box(str.replace(/\%/g, ''))
     .map(replaced => parseFloat(replaced))
     .map(number => number * 0.01)
 
-const applyDiscount = (price, discount) =>
+const applyDiscount = (price, discount) => // we can work with multiple variables in a box by nesting with closures.
   moneyToFloat(price)
     .fold(cost =>
-      percentToFloat(discount)
+      percentToFloat(discount) 
         .fold(savings => cost - cost * savings))
 
 const result = applyDiscount( '$5.00', '20%' )
@@ -122,7 +124,7 @@ const Right = x =>
 
 const Left = x =>
 ({
-  map: f => Left(x),          // [2]
+  map: f => Left(x),          // Ignores all the requests and returns the given value.
   fold: (f, g) => f(x),       // [1]
   inspect: ()=> `Left(${x})` 
 })
@@ -135,7 +137,6 @@ console.log( leftResult ) // error
 ```
 
 [1] The difference between 'Right' and 'Left' is 'fold'. If it's 'Right', it runs the second function. If it's 'Left', it runs the first function. This allows us to do pure functional error handling way.    
-[2] Ignores all the requests and returns the given value.
 
 ```javascript
 const Right = x =>
@@ -162,7 +163,7 @@ console.log( result ) // FF4444
 // using Right and Left  
 
 const fromNullable = x =>
-  x != null ? Right(x) : Left(null)
+  x ? Right(x) : Left(null)
 
 const findColor = name =>
   fromNullable({red: '#ff4444', blue: '#3b5998', yellow: '#fff68f'}[name])
