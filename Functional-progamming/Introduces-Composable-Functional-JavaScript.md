@@ -165,6 +165,7 @@ const findColor = name =>
 
 const result = findColor('red').slice(1).toUpperCase()
 console.log( result ) // FF4444 
+//If we try to find a color there isn't like 'green', the app will be dead. Because, there is no return value from 'findColor' and we try run slice on the null.
 
 
 // using Right and Left  
@@ -176,38 +177,31 @@ const findColor = name =>
   fromNullable({red: '#ff4444', blue: '#3b5998', yellow: '#fff68f'}[name])
 
 const result = findColor('green')
-                .map(c => c.slice(1))
+                .map(c => c.slice(1)) 
                 .fold(e => 'no color', c => c.toUpperCase())
 console.log( result ) // no color 
 ```
+Even if we try to find a color 'findColor' doesn't have, the app doesn't die since 'findColor' returns 'Left' which can be mapped over.
 
 ## 4. Use chain for composable error handling with nested Eithers
 
 ```javascript
 const Right = x =>
 ({
-  map: f => Right(f(x)),     
-  fold: (f, g) => g(x),       
-  inspect: ()=> `Right(${x})` 
+  map: f => Right(f(x)),
+  fold: (f, g) => g(x),
+  inspect: ()=> `Right(${x})`
 })
 
 const Left = x =>
 ({
-  map: f => Left(x),          
-  fold: (f, g) => f(x),       
-  inspect: ()=> `Left(${x})` 
+  map: f => Left(x),
+  fold: (f, g) => f(x),
+  inspect: ()=> `Left(${x})`
 })
 
 const fromNullable = x =>
   x != null ? Right(x) : Left(null)
-
-const tryCatch = f => {
-  try {
-    return Right(f())
-  }catch(e){
-    return Left(e)
-  }
-}
 
 const fs = require('fs')
 
@@ -223,10 +217,19 @@ const getPort = () => {
 
 // Refactor 'getPort()'
 
+const tryCatch = f => {
+  try {
+    return Right(f())
+  }catch(e){
+    return Left(e)
+  }
+}
+
 const getPort = () =>
   tryCatch(() => fs.readFileSync('config.json')) // [1] Right('')
-  .map(c => tryCatch(JSON.parse(c))) // [2] Right(Right('')) or Right(Left())
-  .fold(e => 3000, c => c.port)
+  .map(c => tryCatch(() => JSON.parse(c))) // [2] Right(Right('')) or Right(Left())
+  .fold(e => 3000, c => 
+    c.fold(e => 3000, c => c.port)) // Need to fold twice!
 
 const result = getPort()
 console.log(result) // 8888
@@ -234,25 +237,26 @@ console.log(result) // 8888
 ```
 
 [1] It returns wrapped value.   
-[2] Whatever the input is, it wraps the value and returns it. So the result value will be wrapped 2 times. It will be quite confusing to figure it out and we need to fold twice which is a bit inconvenient.
+[2] Whatever the input is, it wraps the value and returns it.   
+So the result value will be wrapped 2 times. It will be quite confusing to figure it out and we need to fold twice which is a bit inconvenient.
 
 That's why we need 'chain' in the Either.
 
 ```javascript
 const Right = x =>
 ({
-  chain: f => f(x),
-  map: f => Right(f(x)),     
-  fold: (f, g) => g(x),       
-  inspect: ()=> `Right(${x})` 
+  chain: f => f(x), // Basically works the same way like map but we don't put the value in a Box
+  map: f => Right(f(x)),
+  fold: (f, g) => g(x),
+  inspect: ()=> `Right(${x})`
 })
 
 const Left = x =>
 ({
   chain: f => Left(x),
-  map: f => Left(x),          
-  fold: (f, g) => f(x),       
-  inspect: ()=> `Left(${x})` 
+  map: f => Left(x),
+  fold: (f, g) => f(x),
+  inspect: ()=> `Left(${x})`
 })
 
 const fromNullable = x =>
@@ -269,8 +273,8 @@ const tryCatch = f => {
 const fs = require('fs')
 
 const getPort = () =>
-  tryCatch(() => fs.readFileSync('config.json')) 
-  .chain(c => tryCatch(JSON.parse(c))) // [1] Right('')
+  tryCatch(() => fs.readFileSync('config.json'))
+  .chain(c => tryCatch(() => JSON.parse(c))) // [1] Right('')
   .fold(e => 3000, c => c.port)
 
 const result = getPort()
@@ -280,7 +284,8 @@ console.log(result) // 8888
 
 [1] Since we used 'chain' method, it will return only one 'Right'.
 
-The difference between 'chain' and 'fold' is that 'fold' takes a value out of the box whether it's 'Right' or 'Left'. However, 'chain' expects you run a function and return another one. Thus, 'chain' would be one of the steps in the middle and 'fold' will be used to take the result value out of the box.
+The difference between 'chain' and 'fold' is that 'fold' takes a value out of the box whether it's 'Right' or 'Left'.    
+However, 'chain' expects you run a function and return another one. Thus, **'chain' would be one of the steps in the middle and 'fold' will be used to take the result value out of the box**.
 
 ## 5. A collection of Either examples compared to imperative code
 
