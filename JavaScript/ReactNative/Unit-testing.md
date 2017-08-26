@@ -141,6 +141,15 @@ it('displays \'Hello world\'', ()=>{
 });
 ```
 
+- Checking if the component throws an error
+
+```javascript
+it('displays \'Hello world\'', ()=>{
+  const wrapper = shallow(<TestComponent {...props} />);
+  expect(() => wrapper.doSomething()).toThrow();
+});
+```
+
 ## Mock 
 
 - Mock native modules on setup file.

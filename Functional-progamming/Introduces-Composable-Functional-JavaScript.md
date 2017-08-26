@@ -15,7 +15,7 @@ const nextCharForNumberString = str => {
 const result = nextCharForNumberString('  64 ')
 console.log( result ) // A
 ```
-The above code could be rewritten like below.
+The above code could be rewritten like below.   
 However, it is quite hard to follow and not straightforward.
 
 ```javascript
@@ -24,7 +24,7 @@ const result = nextCharForNumberString('  64 ')
 console.log( result ) // A
 ```
 
-Let's make small functions which does only one work at a time and compose it.
+Let's make small functions which does only one work at a time and compose it.   
 Since 'string' in javascript cannot be mapped, it needs to be in a box in order to be mapped.
 
 ```javascript
@@ -114,6 +114,11 @@ console.log( result ) // 4
 
 ## 3. Enforce a null check with composable code branching using Either
 
+> Either is defined as a Right or a Left. 
+Right and Left are sub types of Either.    
+Right works the same way like Box. It runs operation when the x is ture.   
+Left also has the basic structure but it doesn't run anything just return the value wrapped in a Left.
+
 ```javascript
 const Right = x =>
 ({
@@ -136,7 +141,9 @@ const leftResult = Left(3).map(x => x+1).map(x => x/2).fold(x => 'error', x => x
 console.log( leftResult ) // error
 ```
 
-[1] The difference between 'Right' and 'Left' is 'fold'. If it's 'Right', it runs the second function. If it's 'Left', it runs the first function. This allows us to do pure functional error handling way.    
+[1] The difference between 'Right' and 'Left' is 'fold'.  
+If it's 'Right', it runs the second function. If it's 'Left', it runs the first function.    
+This allows us to do pure functional error handling way.    
 
 ```javascript
 const Right = x =>
