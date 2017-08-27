@@ -1642,3 +1642,4 @@ References
 - [ramdajs - curry](http://ramdajs.com/0.19.1/docs/#curry)
 - [Why curry helps](https://hughfdjackson.com/javascript/why-curry-helps/)
 - [Functional Programming Jargon](https://github.com/hemanth/functional-programming-jargon)
+- [Lambda Calculus - Computerphile](https://youtu.be/eis11j_iGMs)
