@@ -1,0 +1,8 @@
+{
+  "name": "semigroup-example",
+  "version": "0.0.1",
+  "dependencies": {
+    "immutable": "^3.8.1",
+    "immutable-ext": "^1.1.2"
+  }
+}

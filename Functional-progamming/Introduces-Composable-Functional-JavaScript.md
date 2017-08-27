@@ -362,7 +362,7 @@ const readFile = x => tryCatch(() => fs.readFileSync(x))
 const wrapExamples = example =>
   fromNullable(example.previewPath)
   .chain(readFile)
-  .fold(() => example, 
+  .fold(() => example,
         preview => Object.assign({}, example, { preview }))
 ```
 
@@ -388,24 +388,31 @@ const parseDbUrl = cfg =>
 ## 6. Create types with Semigroups
 A type with a concat method that is associative.
 
-```javascript
-const str = "a".concat("b").concat("c")
-const arr = [1,2].concat([3,4]).concat([5,6]) // [1]
+> associative: (mathematics) giving the same result no matter what order the parts of a calculation are done,   
+> for example **(a × b) × c = a × (b × c)**    
+> Definition of associative adjective from the Oxford Advanced Learner's Dictionary
 
-const arr = [1,2].concat(([3,4]).concat([5,6])) // [2]
+```javascript
+const str = "a".concat("b").concat("c") // abc
+const arr = [1,2].concat([3,4]).concat([5,6]) // [1, 2, 3, 4, 5, 6]
+// String and Array are semigroup since it has 'concat' method.
+
+const arr = [1,2].concat(([3,4]).concat([5,6])) // [1, 2, 3, 4, 5, 6]
+// Even if we concat inner part first, we will get the same result. That's called associativity.
 ```
-[1] String and Array are semigroup since it has 'concat' method.   
-[2] Even if we concat inner part first, we will get the same result. That's called associativity. 
+> Append/prepend grouping doesn't really matter with a semigroup, and that is a great property that holds.
+> You might remember associativity from addition. If we say **1 + (1 + 1) == (1 + 1) + 1**.    
+> It does not matter how we group the operations. It will always the same result. That is one property we get from semigroups.   
 
 ```javascript
 const Sum = x =>
 ({
   x,
-  concat: ({x:y}) => Sum(x + y),
+  concat: ({x:y}) => Sum(x + y), // Since concat receives another 'Sum' type, we need to assign 'x' from other 'Sum' to 'y'
   inspect: () => `Sum(${x})`
 })
 
-const res = Sum('1').concat(Sum('2')) // Sum(3)
+const res = Sum(1).concat(Sum(2)) // Sum(3)
 const res = Sum('a').concat(Sum('b')) // Sum(ab)
 ```
 
@@ -433,7 +440,8 @@ const res = First("blah").concat(First("ice cream")).concat(First("meta programm
 
 ## 7. Semigroup examples
 
-A user 'Nico' has accidentally made two accounts. We want to merge those accounts. Using Semigroup we can concat/combine two things together.
+A user 'Nico' has accidentally made two accounts.   
+We want to merge those accounts. Using Semigroup we can concat/combine two things together.
 
 ```javascript
 const { Map } = require("immutable-ext") // fantasyland extension of immutable.js 
@@ -463,17 +471,19 @@ const First = x =>
 const acct1 = Map({ name: First('Nico'), isPaid: All(true), points: Sum(10),
 friends: ['Franklin'] })
 
-const acc2 = Map({ name: First('Nico'), isPaid: All(true), points: Sum(10),
+const acct2 = Map({ name: First('Nico'), isPaid: All(false), points: Sum(10),
 friends: ['Gatsby'] })
 
 const res = acct.concat(acct2)
 console.log(res.toJS())
 
-/* Output
+/*
 { name: First(Nico),
-isPaid: All(false),
-points: Sum(12),
-friends: [ 'Franklin', 'Gatsby' ] } */
+  isPaid: All(false),
+  points: Sum(20),
+  friends: [ 'Franklin', 'Gatsby' ] }
+*/
+
 ```
 
 ## 8. Ensure failsafe combination using monoids
