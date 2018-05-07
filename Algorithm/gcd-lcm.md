@@ -3,7 +3,7 @@
 
 ## Find the greatest common divisor of two **positive** integers
 
-GCD(최대공약수)  = (a*b)/LCM(최소공배수)
+LCM(최소공배수) = (a*b)/GCD(최대공약수)
 
 In general, find GCD first of two numbers and find LCM using that GCD.
 
