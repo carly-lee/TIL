@@ -19,13 +19,11 @@ function toWeirdCase(s){
 ```javascript
 function toWeirdCase(s){
   return s.toUpperCase().replace(/(\w)(\w)/g, a => a[0]+a[1].toLowerCase())
-
 }
+
+console.log("결과 : " + toWeirdCase("try hello world"));
 ```
 
-
-// 아래는 테스트로 출력해 보기 위한 코드입니다.
-console.log("결과 : " + toWeirdCase("try hello world"));
 
 
 ## 행렬의 곱셈 
@@ -48,7 +46,6 @@ function productMatrix(A, B) {
   return answer;
 }
 
-// 아래는 테스트로 출력해 보기 위한 코드입니다.
 var a = [ [1,2],
           [4,5],
         	[6,7] ];
@@ -82,7 +79,6 @@ function is_pair(s){
   return stack.length === 0;
 }
 
-// 아래는 테스트로 출력해 보기 위한 코드입니다.
 console.log( is_pair("(hello)()") )
 console.log( is_pair(")(") )
 ```
@@ -107,7 +103,6 @@ function longest_palindrom(s){
   }
 }
 
-// 아래는 테스트로 출력해 보기 위한 코드입니다.
 console.log( longest_palindrom("토마토맛토마토") )
 console.log( longest_palindrom("토마토맛있어") )
 ```
@@ -138,7 +133,6 @@ function longest_palindrom(s){
   return size;
 }
 
-// 아래는 테스트로 출력해 보기 위한 코드입니다.
 console.log( longest_palindrom("토마토맛토마토") )
 console.log( longest_palindrom("토마토맛있어") )
 console.log( longest_palindrom("zzbaabcd") ) 
@@ -195,7 +189,6 @@ function solution(land) {
   return result;
 }
 
- //아래는 테스트로 출력해 보기 위한 코드입니다.
 var board = [[ 1, 2, 3, 5 ], [ 5, 6, 7, 8 ], [ 4, 3, 2, 1]];
 console.log(solution(board, 3));
 ```
@@ -218,7 +211,6 @@ function hopscotch(board, size) {
   return dp.reduce((acc, row) => Math.max(acc, ...row), 0);
 }
 
- //아래는 테스트로 출력해 보기 위한 코드입니다.
 var board = [[ 1, 2, 3, 5 ], [ 5, 6, 7, 8 ], [ 4, 3, 2, 1]];
 console.log(hopscotch(board, 3));
 ```
