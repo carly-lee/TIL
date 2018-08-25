@@ -10,13 +10,29 @@
 > This event is fired immediately once the layout has been calculated, but the new layout may not yet be reflected on the screen at the time the event is received, especially if a layout animation is in progress.
 
 ```javascript
-_onLayout(e){
-  // {nativeEvent: { layout: {x, y, width, height}}}
+_onLayout({nativeEvent: { layout: {x, y, width, height}}}){
+  // Do something
 }
 
 <View onLayout={this._onLayout} />
 ```
 [Video lecture](https://egghead.io/lessons/react-measure-and-get-the-position-of-a-react-native-element)
+
+- Calculates the offset between the components.
+
+```js
+import { UIManager, findNodeHandle } from 'react-native';
+
+UIManager.measureLayout(
+          findNodeHandle(this.childRef),
+          findNodeHandle(this.parentRef),
+          (msg) => errorCallback(),
+          (offsetX, offsetY, width, height) => {
+            successCallback();
+          },
+        );
+```
+[Beyond Toasts](https://facebook.github.io/react-native/docs/native-modules-android#beyond-toasts)
 
 ---
 
