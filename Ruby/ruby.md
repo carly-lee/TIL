@@ -34,7 +34,18 @@ puts 10 / 7 # 1 - Using only integers the result will be also integer
 puts 10 / 7.0 # 1.4285714285714286
 ```
 
+## Getting inputs 
+
 ```ruby
+puts "Enter your name: "
+
+name = gets  # Wait for the user's input and put the input into the varaible 'name'. 
+puts ("Hello " + name + ", you are cool") # will print new line as well
+# Hello name
+# , you are cool
+# When a user press the enter to put the name, Ruby also takes the new line
+# To prevent this 
+name = gets.chomp() # Remove the new line from the user input
 ```
 
 ```ruby
@@ -63,3 +74,9 @@ puts 10 / 7.0 # 1.4285714285714286
 
 ```ruby
 ```
+
+---
+
+References 
+
+- [Ruby Programming Language - Full Course](https://youtu.be/t_ispmWmdjY)

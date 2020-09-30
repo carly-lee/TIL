@@ -40,6 +40,7 @@ var myAge: Int = 42
 print("Min Int \(Int64.min)") // Min Int -9223372036854775808
 print("Max Int \(Int64.max)") // Max Int 9223372036854775807
 
+// Floats and Doubles store numbers with decimals
 var pi2: Float = 3.1415
 var pi3: Double = 3.1415
 
@@ -49,6 +50,9 @@ print("Max Double \(Double.greatestFiniteMagnitude)") // Max Double 1.7976931348
 
 // Max Float
 print("Max Float \(Float.greatestFiniteMagnitude)") // Max Float 3.40282e+38
+// Float only acurates up to 15 digits
+// Other data types : Int8, Int16, Int32, Int64,
+// UInt8, UInt16, UInt32, UInt64, Float80
 
 // Booleans
 var canVote: Bool = true
@@ -65,6 +69,10 @@ var five = three + Double(two)
 
 // Cast to Int
 print("3 : \(Int(3.14))") // 3 : 3
+
+// Generate a random value from 1 to 10
+var rand = Int.random(in: 1...10)
+print("Rand : \(rand)")
 ```
 
 ## Conditionals
@@ -89,20 +97,6 @@ if age < 5 {
 }
 // Go to Grade 3
 
-
-// Or logical operator
-var income: Double = 12000
-var gpa: Double = 3.7
-
-print("Get Grant : \((income < 15000) || (gpa >= 3.8))") // Get Grant : true
-
-// Not operator
-print("Not True : \(!true)") // Not True : false
-
-// ----- TERNARY OPERATOR -----
-// Assigns 1 of 2 values depending on condition
-
-var canDrive: Bool = age >= 16 ? true : false // false
 ```
 
 ### switch 
@@ -151,6 +145,7 @@ print("5 + 4 = \(5 + 4)") // 5 + 4 = 9
 print("5 - 4 = \(5 - 4)") // 5 - 4 = 1
 print("5 * 4 = \(5 * 4)") // 5 * 4 = 20
 print("5.0 / 4.0 = \(5.0 / 4.0)") // 5.0 / 4.0 = 1.25
+print("5/ 4.0 = \(5 / 4.0)") // 5.0 / 4.0 = 1.25
 // 5/4 will be just 1. should be double.
 print("5 % 4 = \(5 % 4)") // 5 % 4 = 1
 
@@ -207,6 +202,24 @@ if let hereMatch = randStr2.range(of: "here"){
   randStr2.replaceSubrange(hereMatch, with: "there")
 }
 print(randStr2) // A  string and there is another
+
+let galaxy = "Milky Way 🐮"
+for char in galaxy {
+  print(char)
+}
+/*
+M
+i
+l
+k
+y
+ 
+W
+a
+y
+ 
+🐮
+*/
 ```
 
 ## Arrays
@@ -295,6 +308,22 @@ Even : 10
 */
 ```
 
+### for stride
+
+```swift
+// Use stride to create even values from 10 to 2
+for i in stride(from: 10, through:2, by: -2){
+    print(i)
+}
+/*
+10
+8
+6
+4
+2
+*/
+```
+
 ### while
 
 ```swift
@@ -325,7 +354,7 @@ while i < 10 {
 
 ```swift
 // Generate a random number
-let magicNum: UInt32 = arc4random_uniform(10)
+let magicNum: Int = Int.random(in: 1...10)
 var guess: UInt32 = 0
 
 
@@ -336,6 +365,17 @@ repeat {
  
  print("Magic Number was \(magicNum)")
 
+```
+
+### Iterator 
+
+```swift
+ // Create an iterator that pops out the next value with next
+var i = (1...5).makeIterator()
+while let i = i.next(){
+    print(i)
+}
+// 1,2,3,4,5
 ```
 
 ## Dictionaries   
@@ -429,7 +469,7 @@ let party = politicalParty ?? "No Party"
 
 ```swift
 // Define your parameter types
-func getSum(num1: Int, num2: Int){
+func getSum(num1: Int, num2: Int){ 
   print("Sum : \(num1 + num2)")
 }
 
@@ -442,6 +482,20 @@ func getSum2(num1: Int, num2: Int = 1) -> Int{
 }
 
 print("Sum : \(getSum2(num1: 8, num2: 6))") // Sum : 14
+
+// If you don't want to provide the parameter labels do this
+// You can provide default values if you want
+func getSum2(_ x:Int=1, _ y:Int) -> Int {
+    return x + y
+}
+print("Sum : \(getSum2(5, 4))")
+
+// You can overload (have multiple functions with the same name)
+// if they receive different parameter and return types
+func getSum2(_ x:Double, _ y:Double) -> Double {
+    return x + y
+}
+print("Sum : \(getSum2(5.4, 4.5))")
 
 // A variadic parameter allows for an unknown
 // number of parameters
@@ -478,74 +532,138 @@ func twoMults(num: Int) -> (two: Int, three: Int){
 let mults = twoMults(num: 2)
 
 print("2 Mults : \(mults.two), \(mults.three)") // 2 Mults : 4, 6
+
+// You can't change the values of parameters. 
+// Function parameters are constants by default. 
+// func changeMe(_ x: Int) -> Void{
+//    x = 10
+// }
+//
+ 
+// You can however create a new variable with the same name and change it
+func changeMe(_ x: Int) -> Void{
+    let x: Int = 10
+    print("x : \(x)")
+}
+changeMe(5) // X : 10
+
+// In-Out Parameters
+// An in-out parameter has a value that is passed in to the function, is modified by the function, 
+// and is passed back out of the function to replace the original value. 
+// You can only pass a variable as the argument for an in-out parameter. 
+// You cannot pass a constant or a literal value as the argument, 
+/// because constants and literals cannot be modified. 
+// You place an ampersand (&) directly before a variable’s name when you pass it as an argument to an in-out parameter, 
+// to indicate that it can be modified by the function.
+var a = 10
+var b = 20
+func swapTwoInts(_ a: inout Int, _ b: inout Int) {
+    let temporaryA = a
+    a = b
+    b = temporaryA
+}
+
+swapTwoInts(&a, &b)
+print("swapTwoInts : \(a) / \(b)") // swapTwoInts : 20 / 10
+
+// Functions can be assiged to variables and can be passed to
+// be used in other functions and returned from functions
+func multBy2(_ num: Int) -> Int{
+    return num * 2
+}
+// Assign function to a variable
+var timesTwo = multBy2
+print("4 * 2 = \(timesTwo(4))")
+ 
+// Pass a function into another function and return nothing
+func runFunc(_ f:() -> ()) {
+    f()
+}
+func print4() -> Void{
+    print("4")
+}
+runFunc(print4)
+
+// Pass a function that does return a value
+func doMath(_ f: (Int) -> Int, _ x: Int) {
+    print("Result : \(f(x))")
+}
+doMath(timesTwo, 4) // Result : 8
+ 
+// Return a function
+func funcMaker(val: Int) -> (Int) -> Int {
+    func addVals(num1: Int) -> Int{
+        return num1 + val
+    }
+    return addVals
+}
+let add4 = funcMaker(val: 4)
+print("4 + 5 = \(add4(5))") // 4 + 5 = 9
 ```
 
 ## Closures
-Closures are functions that don't require a name or function definition 
+Closures are self-contained blocks of functionality that can be passed around and used in your code. 
+Closures can capture and store references to any constants and variables from the context in which they are defined. 
+This is known as closing over those constants and variables. Swift handles all of the memory management of capturing for you.
+
+### Closure Expression Syntax
+
+{ (parameters) -> return type in
+    statements
+}
 
 ```swift
-// A closure that excepts and returns an Int
-var square: (Int) -> (Int) = {
-  num in
-  return num * num
+func backward(_ s1: String, _ s2: String) -> Bool {
+    return s1 > s2
 }
 
-print("5 Quared : \(square(5))") // 5 Quared : 25
+// can be re-written as below 
 
-// Assign a closure to another variable
-var squareCopy = square
-print("5 Quared : \(squareCopy(5))") // 5 Quared : 25
-
-// You can reference any values outside the closure
-let numbers = [8,9,2,4,1,0,7]
-
-// Create a function that returns a Bool stating
-// if 1 value is greater then the other
-
-let sortedNums = numbers.sorted(by: {
-  x, y in x < y
-})
-
-for i in sortedNums{
-  print(i)
+{ (s1: String, s2: String) -> Bool in
+    return s1 > s2
 }
-// [0, 1, 2, 4, 7, 8, 9]
+
+// Because the sorting closure is passed as an argument to a method, 
+// Swift can infer the types of its parameters and the type of the value it returns. 
+{ s1, s2 in return s1 > s2 }
+
+// Implicit Returns from Single-Expression Closures
+{ s1, s2 in s1 > s2 }
+```
+
+In Swift, the simplest form of a closure that can capture values is a nested function, written within the body of another function. 
+A nested function can capture any of its outer function’s arguments and can also capture any constants and variables defined within the outer function.
+
+
+`makeIncrementer` contains a nested function called `incrementer`. 
+The nested `incrementer()` function captures two values, `runningTotal` and `amount`, from its surrounding context. 
+After capturing these values, `incrementer` is returned by `makeIncrementer` as a closure that increments `runningTotal` by `amount` each time it is called.
+
+```swift
+func makeIncrementer(forIncrement amount: Int) -> () -> Int {
+    var runningTotal = 0
+    func incrementer() -> Int {
+        runningTotal += amount
+        return runningTotal
+    }
+    return incrementer
+}
+
+var incrementBy2 = makeIncrementer(forIncrement: 2)
+print(incrementBy2()) // 2
+print(incrementBy2()) // 4
+print(incrementBy2()) // 6
+
 
 // Square every item in an array with map
 // map excepts a closure
-
+ 
 let squaredNums = numbers.map {
-  (num: Int) -> String in
-  "\(num * num)"
+    (num: Int) -> String in
+    "\(num * num)"
 }
-
-print(squaredNums) // ["64", "81", "4", "16", "1", "0", "49"]
-
-// Return a function
-
-func funcMaker(val: Int) -> (Int) -> Int {
-  func addVals(num1: Int) -> Int{
-    return num1 + val
-  }
-  
-  return addVals
-}
-
-let add4 = funcMaker(val: 4)
-
-print("4 + 5 = \(add4(5))") // 4 + 5 = 9
-
-// Pass a function as a parameter
-func doMath2(_ mathFunc: (Int, Int) -> Int, val: Int){
-  print("Sum : \(mathFunc(val, val))") // Sum : 10
-}
-
-func addNums(a: Int, b: Int) -> Int {
-  return a + b
-}
-
-doMath2(addNums, val: 5)
-
+ 
+print(squaredNums)
 
 // Used to filter out values in an array
 let nums2 = [1,2,3,4,5,6]
@@ -815,3 +933,5 @@ print("Square of 5 : \(randNum2.square())") // Square of 5 : 25.0
 
 References   
 - [Swift 3 Tutorial](https://www.youtube.com/watch?v=dKaojOZ-az8)
+- [SWift 5 Tutorial](https://youtu.be/Pd8IvykiW20)
+- [Swift Language Guide](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)

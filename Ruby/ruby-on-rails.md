@@ -23,5 +23,7 @@ end
 ```
 The `@test` variable inside `new` indicates different instance.
 
+- all controllers inherit **ApplicationController**
+
 ----
 https://guides.rubyonrails.org/action_controller_overview.html#filters
