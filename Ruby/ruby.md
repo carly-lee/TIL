@@ -323,3 +323,4 @@ References
 - [Ruby Programming | In One Video](https://youtu.be/8wZ2ZD--VTk)
 - [File modes in Ruby](https://stackoverflow.com/a/3682374/3148633)
 - [rubylearning.com](rubylearning.com)
+- [Ruby For Beginners](http://ruby-for-beginners.rubymonstas.org/)

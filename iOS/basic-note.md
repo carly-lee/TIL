@@ -1,16 +1,24 @@
 # AppDelegate
 
 - When the app runs, 'AppDelegate' file runs UIApplicationMain() which actually starts the app.
-- Once it starts, the app looks for the file called 'info.plist' where the name of Storyboard file is set. 
+- Once it starts, the app looks for the file called 'info.plist' where the name of Storyboard file is set.
 - Storyboard loads the View Controller that's set as the initial View Controller.
 - View Controller loads its view.
 - runs the 'viewDidLoad' function.
 
+## Cocoa
+
+Cocoa is Apple's native object-oriented application programming interface (API) for their operating system macOS.
+
+## Darwin
+
+C-based UNIX functions (such as arc4random_uniform) and C Standard Library functions (such as the common C math functions) that are built into OS X and iOS. These and many other features of UNIX and C are available via the Darwin module, which provides access to the C libraries in Darwin—Apple’s open-source UNIX-based core on which the OS X and iOS operating systems are built.
+
 ## Objective-C
 
-```objective-c 
+```objective-c
 #import "AppDelegate.h"
-  
+
 @interface AppDelegate ()
 
 @end
@@ -19,15 +27,15 @@
 
 -(BOOL) application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-// method name                   param type     param names 
+// method name                   param type     param names
 {
-// Get the screen and information about screen size 
+// Get the screen and information about screen size
 CGRect viewRect = [[UIScreen mainScreen] bounds];
-    
-// Initialize UIWindow window with screen size 
+
+// Initialize UIWindow window with screen size
 self.window = [[UIWindow alloc] initWithFrame:viewRect];
 
-// could be wrriten in one line 
+// could be wrriten in one line
 self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
 UIViewController *rootViewController = [[UIViewController alloc] init];
@@ -37,7 +45,7 @@ UIViewController *rootViewController = [[UIViewController alloc] init];
 UIView *rootView = [[UIView alloc] initWithFrame:viewRect];
 rootViewController.view = rootView;
 
-// Make the window can use the viewController to draw the view 
+// Make the window can use the viewController to draw the view
 self.window.rootViewController = rootViewController;
 
 // Receive all keyboard & non-touch events
@@ -87,6 +95,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 ```
 
 # ViewController
+
 - Has a main view and all other views go under the mainview as subview.
 - 'ViewController' can tell view what to display.
 - 'View' can tell controller when user is interacting.
@@ -119,7 +128,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 ```swift
 import UIKit
-// A framework that contains templates for standardized ways to display data in an app. Such as Text, Images, Button ... so on.
+// A framework that contains templates for standardized ways to display data in an app.
+// Such as Text, Images, Button ... so on.
 
 class ViewController: UIViewController {
 
@@ -136,17 +146,19 @@ class ViewController: UIViewController {
 ```
 
 # Storyboard
-- Visually layouts screens as scenes
-- Contains ViewController and MainView. All other views go into MainView. 
 
-# ScrollView 
-- needs to know the exact size to scroll 
+- Visually layouts screens as scenes
+- Contains ViewController and MainView. All other views go into MainView.
+
+# ScrollView
+
+- needs to know the exact size to scroll
 - Any time when the size of subview is changing and needed to be controlled, it should be done inside 'viewWillLayoutSubviews()'
 
 ```swift
 override func viewWillLayoutSubviews() {
     super.viewWillLayoutSubviews()
-        
+
     // Need to tell ScrollView about the exact size to scroll
     scrollView.contentSize = CGSize( width: 375, height: 800 )
 }

@@ -1,22 +1,14 @@
 # Swift
 
-## Cocoa
-Cocoa is Apple's native object-oriented application programming interface (API) for their operating system macOS. 
-
-## Darwin 
-C-based UNIX functions (such as arc4random_uniform) and C Standard Library functions (such as the common C math functions) that are built into OS X and iOS. These and many other features of UNIX and C are available via the Darwin module, which provides access to the C libraries in Darwin—Apple’s open-source UNIX-based core on which the OS X and iOS operating systems are built.
-
 ## Variable types
 
-- **var**   
-mutable.
-- **let**    
-immutable. constant.
+- **var**  
+  variable
+- **let**  
+  constant.
+  > The value of a constant doesn’t need to be known at compile time, but you must assign it a value exactly once. If the initial value doesn’t provide enough information (or if there is no initial value), specify the type by writing it after the variable, separated by a colon.
 
 ```swift
-import Cocoa
-import Darwin
-
 var hello = "Hello "
 var world: String = "World"
 
@@ -25,6 +17,16 @@ var msg = hello + world // Hello World
 
 // You can place variables in print
 print("Hello \(world)") // Hello World
+
+let quotation = """
+I said "I have \(apples) apples."
+And then I said "I have \(apples + oranges) pieces of fruit."
+"""
+
+
+let nickname: String? = nil
+let fullName: String = "John Appleseed"
+let informalGreeting = "Hi \(nickname ?? fullName)" // if nickname is missing fullName will be used as a default value
 ```
 
 ## Data Types
@@ -78,10 +80,14 @@ print("Rand : \(rand)")
 ## Conditionals
 
 ### Comparison Operators : > < >= <= == !=
+
 - === : Checks if pointing to same reference
 - !== : Checks if don't point at same reference
 
 ### if / else
+
+> In an if statement, the conditional must be a Boolean expression—this means that code such as **if score { ... } is an error, not an implicit comparison to zero**.
+
 ```swift
 var age: Int = 8
 
@@ -99,25 +105,41 @@ if age < 5 {
 
 ```
 
-### switch 
+```swift
+var optionalString: String? = "Hello"
+print(optionalString == nil)
+// Prints "false"
+
+var optionalName: String? = "John Appleseed"
+var greeting = "Hello!"
+
+// If the optional value is nil, the conditional is false and the code in braces is skipped.
+// Otherwise, the optional value is unwrapped and assigned to the constant after let,
+// which makes the unwrapped value available inside the block of code.
+if let name = optionalName {
+    greeting = "Hello, \(name)"
+}
+```
+
+### switch
+
+> After executing the code inside the switch case that matched, the program exits from the switch statement. Execution doesn’t continue to the next case, so there is no need to explicitly break out of the switch at the end of each case’s code.
 
 ```swift
 let ingredient = "pasta"
 
-switch ingredient {
-// Matches for tomatoes or pasta
-case "tomatoes", "pasta":
-  print("Spaghetti")
-  // fallthrough matches the next case even if
-// there is no match
-case "beans":
-  print("Burrito")
-case "potatoes":
-  print("Mashed Potatoes")
+let vegetable = "red pepper"
+switch vegetable {
+case "celery":
+    print("Add some raisins and make ants on a log.")
+case "cucumber", "watercress":
+    print("That would make a good tea sandwich.")
+case let x where x.hasSuffix("pepper"):
+    print("Is it a spicy \(x)?")
 default:
-  print("Water")
+    print("Everything tastes good in soup.")
 }
-// Spaghetti
+// Prints "Is it a spicy red pepper?"
 
 
 // You can also match ranges
@@ -177,7 +199,7 @@ print("Length : \(randStr3.count)") // Length : 43
 print("First : \(randStr3[randStr3.startIndex])") // First : T
 
 // Get the 5th character
-let index5 = randStr3.index(randStr3.startIndex, offsetBy: 5) 
+let index5 = randStr3.index(randStr3.startIndex, offsetBy: 5)
 print("5th : \(randStr3[index5])") // 5th : i
 
 // Check if string is empty
@@ -213,11 +235,11 @@ i
 l
 k
 y
- 
+
 W
 a
 y
- 
+
 🐮
 */
 ```
@@ -329,20 +351,18 @@ for i in stride(from: 10, through:2, by: -2){
 ```swift
 var i: Int = 1
 while i < 10 {
-  
+
   if i % 2 == 0 {
     i += 1
-    
     // Continue jumps back to the beginning of the loop
     continue
   }
-  
+
   if i == 7 {
-    
     // Break ends the loop
     break
   }
-  
+
   print(i)
   i += 1
 }
@@ -357,17 +377,17 @@ while i < 10 {
 let magicNum: Int = Int.random(in: 1...10)
 var guess: UInt32 = 0
 
-
+// Run the code at least once
 repeat {
  print("Guess : \(guess)")
  guess += 1
 } while (magicNum != guess)
- 
+
  print("Magic Number was \(magicNum)")
 
 ```
 
-### Iterator 
+### Iterator
 
 ```swift
  // Create an iterator that pops out the next value with next
@@ -378,7 +398,8 @@ while let i = i.next(){
 // 1,2,3,4,5
 ```
 
-## Dictionaries   
+## Dictionaries
+
 Stores unordered lists of key value pairs
 
 ```swift
@@ -422,7 +443,8 @@ for (key, value) in cust {
 ```
 
 ## Tuples
-Tuples are finite group of values that are related 
+
+Tuples are finite group of values that are related
 
 ```swift
 let height: Double = 6.25
@@ -441,12 +463,13 @@ print("Weight : \(myData2.weight)") // Weight : 175
 ```
 
 ## Optional
+
 Optionals are used to indicate that there may not be a value. Everything that can have a value of nil should be declared optional. It's like 'Maybe'.
 
 ```swift
 // Check for nil
 if politicalParty != nil {
-  
+
   // Get the value (Forced Unwrapping)
   // It returns Optional(party). so should be unwrapped.
   let party = politicalParty!
@@ -468,13 +491,6 @@ let party = politicalParty ?? "No Party"
 ## Functions
 
 ```swift
-// Define your parameter types
-func getSum(num1: Int, num2: Int){ 
-  print("Sum : \(num1 + num2)")
-}
-
-getSum(num1: 5,num2: 6) // Sum : 11
-
 // Define your return type and you can define
 // default values
 func getSum2(num1: Int, num2: Int = 1) -> Int{
@@ -509,37 +525,51 @@ func getSum3(nums: Int...) -> Int{
 
 print("Sum : \(getSum3(nums: 1,2,3,4,5))") // Sum : 15
 
-// Nested functions are only callable by the enclosing
-// function
+// Nested functions are only callable by the enclosing function
 
 func doMath(num1: Double, num2: Double){
   func mult() -> Double{
     return num1 / num2
   }
-  
+
   print("Mult : \(mult())") // Mult : 0.833333333333333
 }
 
 doMath(num1: 5.0, num2: 6.0)
 
 // Return multiple values
-func twoMults(num: Int) -> (two: Int, three: Int){
-  let two: Int = num * 2
-  let three: Int = num * 3
-  return (two, three)
+// Use a tuple to make a compound value—for example, to return multiple values from a function.
+func calculateStatistics(scores: [Int]) -> (min: Int, max: Int, sum: Int) {
+    var min = scores[0]
+    var max = scores[0]
+    var sum = 0
+
+    for score in scores {
+        if score > max {
+            max = score
+        } else if score < min {
+            min = score
+        }
+        sum += score
+    }
+
+    return (min, max, sum)
 }
+let statistics = calculateStatistics(scores: [5, 3, 100, 3, 9])
+print(statistics.sum)
+// Prints "120"
+print(statistics.2)
+// Prints "120"
+// The elements of a tuple can be referred to either by name or by number.
 
-let mults = twoMults(num: 2)
 
-print("2 Mults : \(mults.two), \(mults.three)") // 2 Mults : 4, 6
-
-// You can't change the values of parameters. 
-// Function parameters are constants by default. 
+// You can't change the values of parameters.
+// Function parameters are constants by default.
 // func changeMe(_ x: Int) -> Void{
 //    x = 10
 // }
 //
- 
+
 // You can however create a new variable with the same name and change it
 func changeMe(_ x: Int) -> Void{
     let x: Int = 10
@@ -548,12 +578,12 @@ func changeMe(_ x: Int) -> Void{
 changeMe(5) // X : 10
 
 // In-Out Parameters
-// An in-out parameter has a value that is passed in to the function, is modified by the function, 
-// and is passed back out of the function to replace the original value. 
-// You can only pass a variable as the argument for an in-out parameter. 
-// You cannot pass a constant or a literal value as the argument, 
-/// because constants and literals cannot be modified. 
-// You place an ampersand (&) directly before a variable’s name when you pass it as an argument to an in-out parameter, 
+// An in-out parameter has a value that is passed in to the function, is modified by the function,
+// and is passed back out of the function to replace the original value.
+// You can only pass a variable as the argument for an in-out parameter.
+// You cannot pass a constant or a literal value as the argument,
+/// because constants and literals cannot be modified.
+// You place an ampersand (&) directly before a variable’s name when you pass it as an argument to an in-out parameter,
 // to indicate that it can be modified by the function.
 var a = 10
 var b = 20
@@ -574,7 +604,7 @@ func multBy2(_ num: Int) -> Int{
 // Assign function to a variable
 var timesTwo = multBy2
 print("4 * 2 = \(timesTwo(4))")
- 
+
 // Pass a function into another function and return nothing
 func runFunc(_ f:() -> ()) {
     f()
@@ -589,7 +619,7 @@ func doMath(_ f: (Int) -> Int, _ x: Int) {
     print("Result : \(f(x))")
 }
 doMath(timesTwo, 4) // Result : 8
- 
+
 // Return a function
 func funcMaker(val: Int) -> (Int) -> Int {
     func addVals(num1: Int) -> Int{
@@ -602,41 +632,64 @@ print("4 + 5 = \(add4(5))") // 4 + 5 = 9
 ```
 
 ## Closures
-Closures are self-contained blocks of functionality that can be passed around and used in your code. 
-Closures can capture and store references to any constants and variables from the context in which they are defined. 
+
+Closures are self-contained blocks of functionality that can be passed around and used in your code.
+Closures can capture and store references to any constants and variables from the context in which they are defined.
 This is known as closing over those constants and variables. Swift handles all of the memory management of capturing for you.
 
 ### Closure Expression Syntax
 
 { (parameters) -> return type in
-    statements
+statements
 }
+
+You can write a closure without a name by surrounding code with braces ({}).
+Use in to separate the arguments and return type from the body.
+
+```swift
+numbers.map({ (number: Int) -> Int in
+    let result = 3 * number
+    return result
+})
+```
+
+When a closure’s type is already known, such as the callback for a delegate, you can omit the type of its parameters, its return type, or both. Single statement closures implicitly return the value of their only statement.
+
+```swift
+let mappedNumbers = numbers.map({ number in 3 * number })
+print(mappedNumbers)
+// Prints "[60, 57, 21, 36]"
+
+// You can refer to parameters by number instead of by name
+let sortedNumbers = numbers.sorted { $0 > $1 }
+print(sortedNumbers)
+// Prints "[20, 19, 12, 7]"
+```
 
 ```swift
 func backward(_ s1: String, _ s2: String) -> Bool {
     return s1 > s2
 }
 
-// can be re-written as below 
+// can be re-written as below
 
 { (s1: String, s2: String) -> Bool in
     return s1 > s2
 }
 
-// Because the sorting closure is passed as an argument to a method, 
-// Swift can infer the types of its parameters and the type of the value it returns. 
+// Because the sorting closure is passed as an argument to a method,
+// Swift can infer the types of its parameters and the type of the value it returns.
 { s1, s2 in return s1 > s2 }
 
 // Implicit Returns from Single-Expression Closures
 { s1, s2 in s1 > s2 }
 ```
 
-In Swift, the simplest form of a closure that can capture values is a nested function, written within the body of another function. 
+In Swift, the simplest form of a closure that can capture values is a nested function, written within the body of another function.
 A nested function can capture any of its outer function’s arguments and can also capture any constants and variables defined within the outer function.
 
-
-`makeIncrementer` contains a nested function called `incrementer`. 
-The nested `incrementer()` function captures two values, `runningTotal` and `amount`, from its surrounding context. 
+`makeIncrementer` contains a nested function called `incrementer`.
+The nested `incrementer()` function captures two values, `runningTotal` and `amount`, from its surrounding context.
 After capturing these values, `incrementer` is returned by `makeIncrementer` as a closure that increments `runningTotal` by `amount` each time it is called.
 
 ```swift
@@ -657,12 +710,12 @@ print(incrementBy2()) // 6
 
 // Square every item in an array with map
 // map excepts a closure
- 
+
 let squaredNums = numbers.map {
     (num: Int) -> String in
     "\(num * num)"
 }
- 
+
 print(squaredNums)
 
 // Used to filter out values in an array
@@ -686,6 +739,7 @@ print(sum2) // 21
 ```
 
 ## Enumeratoins
+
 Define types with a limited number of cases
 
 ```swift
@@ -707,13 +761,16 @@ print("Angry : \(feeling == .anger)") // Angry : true
 ```
 
 ## Structs
+
 Structs group related data together
+
+> One of the most important differences between structures and classes is that structures are always copied when they are passed around in your code, but classes are passed by reference.
 
 ```swift
 struct Rectangle {
   var height = 0.0
   var length = 0.0
-  
+
   // You can include functions
   func area() -> Double{
     let area = height * length
@@ -734,63 +791,72 @@ print("Area : \(myRect.height) * \(myRect.length) = \(myRect.area())")
 class Animal {
   var name: String = "No Name"
   var height: Double = 0.0
-  var weight: Double = 0.0
+  var weightInKg: Double = 0.0
   var sound: String = "No Sound"
-  
-  // Assigns default values when an object is created
-  // You can have many inits with different attributes
-  
-  // self is used to refer to attributes of the object
-  // that called for this method to execute
-  init(name: String, height: Double, weight: Double, sound: String){
+
+  init(name: String, height: Double, weightInKg: Double, sound: String){
     self.name = name
     self.height = height
-    self.weight = weight
+    self.weightInKg = weightInKg
     self.sound = sound
   }
-  
+
   func getInfo(){
-    print("\(self.name) is \(self.height) cms tall and weighs \(self.weight) kgs and likes to say \(self.sound)")
+    print("\(self.name) is \(self.height) cms tall and weighs \(self.weightInKg) kgs and likes to say \(self.sound)")
   }
-  
+
+ // properties can have a getter and a setter.
+  var weightInGram: Double {
+        get {
+            return self.weightInKg * 1000
+        }
+        // if the name is not defined after 'set' the new value can be called with *newValue* implicitly
+        set (newWeightInKgs) {
+            return newWeightInKgs * 1000
+        }
+    }
+
   // You can create overloaded methods if you change
   // the attributes
   func getSum(num1: Int, num2: Int) -> Int{
     return num1 + num2
   }
-  
+
   func getSum(num1: Double, num2: Double) -> Double{
     return num1 + num2
   }
-  
+
 }
 
+// no new statement
 var rover = Animal(name: "Rover", height: 38, weight: 12.7, sound: "Ruff")
 
 rover.getInfo()
 // Rover is 38.0 cms tall and weighs 12.7 kgs and likes to say Ruff
 ```
 
+Use **deinit** to create a deinitializer if you need to perform some cleanup before the object is deallocated.
+
 ### Inheritance
 
 ```swift
 class Dog: Animal{
-  
+
   // Dog can extend or override methods in Animal
   // A func marked as final can't be overridden by
   // subclasses
-  
+
   final func digHole(){
     print("\(self.name) digs a hole")
   }
-  
+
   override func getInfo(){
-    
+
     // You can call a method in the superclass
     super.getInfo()
     print("and digs holes")
   }
-  
+
 }
 
 var spot = Dog(name: "Spot", height: 38, weight: 12.7, sound: "Ruff")
@@ -835,8 +901,12 @@ print("Is Spot a Dog : \(spot is Animal)") // Is Spot a Dog : true
 ```
 
 ## Protocols
+
 Protocols are like interfaces in other languages.
-When you adopt a protocol you agree to define the behavior it describes
+When you adopt a protocol you agree to define the behavior it describes.
+Protocol can be used like any other named type.
+
+> Classes, enumerations, and structs can all adopt protocols.
 
 ```swift
 protocol Flyable {
@@ -844,17 +914,17 @@ protocol Flyable {
   // Put optional before var if you want it to be
   // optional
   var flies: Bool { get set }
-  
+
   // You define the header for a func but nothing else
   func fly(distMiles: Double) -> String
-  
+
 }
 
 // Adopt multiple protocols class ClassName : prot1, prot2
 class Vehicle : Flyable{
   var flies: Bool = false
   var name: String = "No Name"
-  
+
   func fly(distMiles: Double) -> String {
     if (self.flies){
       return "\(self.name) flies \(distMiles) miles"
@@ -869,6 +939,54 @@ fordF150.name = "Ford F-150"
 fordF150.flies = false
 print(fordF150.fly(distMiles: 10))
 // Ford F-150 can't fly
+```
+
+```swift
+protocol ExampleProtocol {
+    var simpleDescription: String { get }
+    mutating func adjust() // mutating keyword is only for struct
+}
+
+class SimpleClass: ExampleProtocol {
+    var simpleDescription: String = "A very simple class."
+    var anotherProperty: Int = 69105
+    func adjust() {
+        simpleDescription += "  Now 100% adjusted."
+    }
+}
+
+var a = SimpleClass()
+a.adjust()
+let aDescription = a.simpleDescription
+
+struct SimpleStructure: ExampleProtocol {
+    var simpleDescription: String = "A simple structure"
+    mutating func adjust() {
+        simpleDescription += " (adjusted)"
+    }
+}
+var b = SimpleStructure()
+b.adjust()
+let bDescription = b.simpleDescription
+```
+
+> Notice the use of the **mutating** keyword in the declaration of SimpleStructure to mark a method that modifies the structure. The declaration of SimpleClass doesn’t need any of its methods marked as mutating because methods on a class can always modify the class.
+
+### Extension
+
+> Use extension to add functionality to an existing type, such as new methods and computed properties.
+
+```swift
+extension Int: ExampleProtocol {
+    var simpleDescription: String {
+        return "The number \(self)"
+    }
+    mutating func adjust() {
+        self += 42
+    }
+}
+print(7.simpleDescription)
+// Prints "The number 7"
 ```
 
 ## Error handling
@@ -890,48 +1008,42 @@ func divide(num1: Float, num2: Float) throws -> Float {
 
 // Wrap code that could trigger an error in a do catch block
 // catch the error and handle it
-
 do {
   try divide(num1: 4, num2: 0)
 } catch DivisionError.DivideByZero {
   print("Can't Divide by Zero")
 }
 //Can't Divide by Zero
+
 ```
 
-## Extensions
-Extensions add new functionality to existing classes, structs and other types.
-
-Extend a Double to work with different distance units.
-The Double by default is in meters and we can convert to other types by appending a dot syntax.
+> Another way to handle errors is to use try? to convert the result to an optional. If the function throws an error, the specific error is discarded and the result is nil. Otherwise, the result is an optional containing the value that the function returned.
 
 ```swift
-extension Double {
-  var km: Double { return self * 1000.0 }
-  var m: Double { return self }
-  var ft: Double { return self * 3.28 }
-  var inch: Double { return self * 39.37}
-  
-  // Add a method to Double for squares
-  mutating func square() -> Double {
-    let sqr = self * self
-    return sqr
-  }
+let dividedNumber = try? divide(num1: 4, num2: 2)
+```
+
+## Defer Statement
+
+> Use defer to write a block of code that is executed after all other code in the function, just before the function returns.
+
+```swift
+func f() {
+    defer { print("First defer") }
+    defer { print("Second defer") }
+    print("End of function")
 }
-
-// Convert 1 meter into inches
-let oneMeter = 1.0.inch
-print("One Meter is \(oneMeter) inches") // One Meter is 39.37 inches
-
-// Get the square
-var randNum2: Double = 5
-print("Square of 5 : \(randNum2.square())") // Square of 5 : 25.0
+f()
+// Prints "End of function"
+// Prints "Second defer"
+// Prints "First defer"
 
 ```
 
 ---
 
-References   
+References
+
 - [Swift 3 Tutorial](https://www.youtube.com/watch?v=dKaojOZ-az8)
 - [SWift 5 Tutorial](https://youtu.be/Pd8IvykiW20)
 - [Swift Language Guide](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)
