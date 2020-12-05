@@ -1,4 +1,4 @@
-# Swift
+# Swift Basic
 
 ## Variable types
 
@@ -33,6 +33,8 @@ let informalGreeting = "Hi \(nickname ?? fullName)" // if nickname is missing fu
 
 ```swift
 // Use let to define a constant
+// The type of this constant will be Double.
+// When there's no type annotation on the floating number, Double is preferred
 let pi = 3.14159265359
 
 // Declare an int
